@@ -113,19 +113,19 @@ AI Vision không chỉ trả về kết quả phân tích mà còn tự động 
 \caption{Ma trận quyết định của AI Vision}
 \label{tab:decision-matrix}
 \ReportTableFont
-\begin{tabular}{|>{\raggedright\arraybackslash}p{4.0cm}|>{\raggedright\arraybackslash}p{2.1cm}|>{\raggedright\arraybackslash}p{3.0cm}|>{\raggedright\arraybackslash}p{4.0cm}|}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{3.9cm}|>{\raggedright\arraybackslash}p{2.0cm}|>{\raggedright\arraybackslash}p{3.1cm}|>{\raggedright\arraybackslash}p{4.0cm}|}
 \hline
 \textbf{Kịch bản} & \textbf{risk\_level} & \textbf{core\_decision} & \textbf{reason} \\
 \hline
-Không phát hiện gì & normal & no\_alert & no\_anomaly\_detected \\
+Không phát hiện gì & \TableCode{normal} & \TableCode{no_alert} & \TableCode{no_anomaly_detected} \\
 \hline
-Phát hiện người, conf $< 0.6$ & normal & no\_alert & low\_confidence\_person \\
+Phát hiện người, conf $< 0.6$ & \TableCode{normal} & \TableCode{no_alert} & \TableCode{low_confidence_person} \\
 \hline
-Phát hiện người, conf $\geq 0.6$ & warning & alert\_required & unknown\_person\_detected \\
+Phát hiện người, conf $\geq 0.6$ & \TableCode{warning} & \TableCode{alert_required} & \TableCode{unknown_person_detected} \\
 \hline
-Phát hiện đối tượng, conf $< 0.85$ & warning & alert\_required & object\_detected \\
+Phát hiện đối tượng, conf $< 0.85$ & \TableCode{warning} & \TableCode{alert_required} & \TableCode{object_detected} \\
 \hline
-Phát hiện đối tượng, conf $\geq 0.85$ & critical & alert\_required & object\_detected\_high\_conf \\
+Phát hiện đối tượng, conf $\geq 0.85$ & \TableCode{critical} & \TableCode{alert_required} & \TableCode{object_detected_high_conf} \\
 \hline
 \end{tabular}
 \normalsize

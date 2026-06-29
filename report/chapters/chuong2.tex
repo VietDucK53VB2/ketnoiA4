@@ -199,13 +199,13 @@ Hàm này chuyển \Code{DetectionResult} thành \Code{CoreCameraEvent}. Logic q
 \hline
 \textbf{Điều kiện} & \textbf{risk\_level} & \textbf{core\_decision} & \textbf{reason} \\
 \hline
-Không phát hiện gì & normal & no\_alert & no\_anomaly \\
+Không phát hiện gì & \TableCode{normal} & \TableCode{no_alert} & \TableCode{no_anomaly} \\
 \hline
-Phát hiện người, conf $\geq$ 0.6 & warning & alert\_required & unknown\_person \\
+Phát hiện người, conf $\geq$ 0.6 & \TableCode{warning} & \TableCode{alert_required} & \TableCode{unknown_person} \\
 \hline
-Phát hiện đối tượng, conf $< 0.85$ & warning & alert\_required & object\_detected \\
+Phát hiện đối tượng, conf $< 0.85$ & \TableCode{warning} & \TableCode{alert_required} & \TableCode{object_detected} \\
 \hline
-Phát hiện đối tượng, conf $\geq$ 0.85 & critical & alert\_required & object\_high\_conf \\
+Phát hiện đối tượng, conf $\geq$ 0.85 & \TableCode{critical} & \TableCode{alert_required} & \TableCode{object_high_conf} \\
 \hline
 \end{tabular}
 \normalsize
