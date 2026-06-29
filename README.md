@@ -1,35 +1,36 @@
-# AI Vision Service
+# AI Vision Service - Smart Campus
 
-Service A4 - AI Vision for Smart Campus Operations Platform.
+This repository contains the A4 AI Vision service and the final report for the Smart Campus Operations Platform.
 
-## Purpose
+## What is included
 
-- Receive `frame_url` from Camera Stream.
-- Run YOLOv8n or fallback mock AI when needed.
-- Return detection results with `confidence`, `risk_level`, and `detection_id`.
-- Expose data that Core Business and Analytics can reuse.
+- FastAPI service for camera-frame analysis.
+- YOLOv8n inference with mock fallback.
+- API contract and OpenAPI spec.
+- Postman collection and smoke test.
+- Final report in LaTeX under `report/`.
 
-## Main documents
+## Key files
 
+- Service entry point: [app/main.py](app/main.py)
+- AI engine: [app/vision.py](app/vision.py)
 - API contract: [API_CONTRACT.md](API_CONTRACT.md)
-- A4 -> A5 contract: [A4_TO_A5_ANALYTICS_CONTRACT.md](A4_TO_A5_ANALYTICS_CONTRACT.md)
-- OpenAPI: [openapi.yaml](openapi.yaml)
+- Analytics contract: [A4_TO_A5_ANALYTICS_CONTRACT.md](A4_TO_A5_ANALYTICS_CONTRACT.md)
+- OpenAPI spec: [openapi.yaml](openapi.yaml)
 - Presentation notes: [PRESENTATION.md](PRESENTATION.md)
 - Smoke test: [test_api.py](test_api.py)
 - Postman collection: [postman/ai-vision.postman_collection.json](postman/ai-vision.postman_collection.json)
 - Postman environment: [postman/ai-vision.postman_environment.json](postman/ai-vision.postman_environment.json)
+- Report source: [report/main.tex](report/main.tex)
+- Report PDF: [report/main.pdf](report/main.pdf)
 
-## Main APIs
+## Team
 
-- `GET /health`
-- `GET /model`
-- `POST /api/v1/vision/detect`
-- `GET /api/v1/vision/detections/{detection_id}`
-- `POST /api/v1/events/camera`
-- `POST /analyze`
-- `POST /analyze/mock`
+- Nguyễn Quang Đạt - `1771020145`
+- Trịnh Việt Đức - `1771020167`
+- Lê Quang Dũng - `1771020177`
 
-## Run locally
+## Run the service
 
 ```bash
 pip install -r requirements.txt
@@ -61,11 +62,10 @@ docker compose up --build
 python test_api.py --base-url http://127.0.0.1:8000 --image-url https://www.ultralytics.com/images/bus.jpg
 ```
 
-## Integration
+## View the report
 
-- Camera Stream sends frame data to `POST /api/v1/vision/detect`.
-- Core Business can use `POST /api/v1/events/camera`.
-- Analytics can consume detection logs for statistics and dashboards.
+- Open [report/main.pdf](report/main.pdf) for the current report PDF.
+- Open [report/main.tex](report/main.tex) if you want to edit the report source.
 
 ## Notes
 
