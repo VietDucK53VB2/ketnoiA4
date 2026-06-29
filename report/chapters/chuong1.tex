@@ -63,7 +63,7 @@ YOLO là một trong những mô hình phát hiện đối tượng phổ biến
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[
-    font=\ReportTableFont,
+    font=\ReportDiagramFont,
     box/.style={rectangle,draw=black,line width=0.8pt,minimum height=1.05cm,align=center},
     flow/.style={-{Latex[length=2.2mm]},line width=0.8pt}
 ]
@@ -232,8 +232,9 @@ A6 - Core Business nhận kết quả phát hiện qua adapter endpoint \Code{PO
 
 \begin{sodo}[H]
     \centering
+    \resizebox{0.96\textwidth}{!}{%
     \begin{tikzpicture}[
-        font=\ReportTableFont,
+        font=\ReportDiagramFont,
         ext/.style={rectangle,draw=black,line width=0.8pt,minimum width=3.0cm,minimum height=0.9cm,align=center},
         svc/.style={rectangle,draw=black,line width=0.8pt,minimum width=3.2cm,minimum height=0.8cm,align=center},
         flow/.style={-{Latex[length=2.2mm]},line width=0.8pt}
@@ -243,18 +244,19 @@ A6 - Core Business nhận kết quả phát hiện qua adapter endpoint \Code{PO
         \node[ext] (analytics) at (11.5,0.9) {A5\\Analytics};
 
         \draw[dashed,line width=0.7pt] (3.0,-0.25) rectangle (8.75,3.75);
-        \node[anchor=south east,font=\bfseries\ReportTableFont] at (8.75,3.75) {AI Vision Service (A4)};
+        \node[anchor=south east,font=\bfseries\ReportDiagramFont] at (8.75,3.75) {AI Vision Service (A4)};
 
         \node[svc] (api) at (5.85,3.0) {API Router\\\texttt{/vision/detect}};
         \node[svc] (engine) at (5.85,1.85) {Detection Engine\\YOLOv8n / Mock AI};
         \node[svc] (adapter) at (5.85,0.7) {Adapter + Store\\DetectionResult};
 
-        \draw[flow] (camera.east) -- node[above]{\texttt{frame\_url}} (api.west);
+        \draw[flow] (camera.east) -- node[midway,above,fill=white,inner sep=1pt]{\texttt{frame\_url}} (api.west);
         \draw[flow] (api) -- (engine);
         \draw[flow] (engine) -- (adapter);
-        \draw[flow] (adapter.east) -- node[above,sloped]{CoreCameraEvent} (core.west);
-        \draw[flow] (adapter.east) -- node[below,sloped]{Detection log} (analytics.west);
+        \draw[flow] (adapter.east) -- node[midway,above,sloped,fill=white,inner sep=1pt]{Core event} (core.west);
+        \draw[flow] (adapter.east) -- node[midway,below,sloped,fill=white,inner sep=1pt]{Detection log} (analytics.west);
     \end{tikzpicture}
+    }
     \SodoCaption{Sơ đồ Service Boundary của AI Vision Service trong Product A}{Nhóm thực hiện}
     \label{fig:service-boundary}
 \end{sodo}
@@ -264,7 +266,7 @@ A6 - Core Business nhận kết quả phát hiện qua adapter endpoint \Code{PO
 \begin{sodo}[H]
     \centering
     \begin{tikzpicture}[
-        font=\ReportTableFont,
+        font=\ReportDiagramFont,
         actor/.style={
             rectangle,
             draw=black,
@@ -294,7 +296,7 @@ A6 - Core Business nhận kết quả phát hiện qua adapter endpoint \Code{PO
         \node[usecase] (health) at (5.2,-1.35) {Kiểm tra sức khỏe\\(\texttt{GET /health})};
 
         \draw[boundary] (1.25,-2.05) rectangle (10.55,4.75);
-        \node[anchor=south east,font=\bfseries\ReportTableFont] at (10.55,4.75) {AI Vision Service};
+        \node[anchor=south east,font=\bfseries\ReportDiagramFont] at (10.55,4.75) {AI Vision Service};
 
         \draw[relation] (camera.east) -- (detect.west);
         \draw[relation] (admin.east) -- (lookup.west);
@@ -312,26 +314,26 @@ A6 - Core Business nhận kết quả phát hiện qua adapter endpoint \Code{PO
 \begin{sodo}[H]
     \centering
     \begin{tikzpicture}[
-        font=\ReportTableFont,
-        layer/.style={rectangle,draw=black,line width=0.8pt,minimum width=7.6cm,minimum height=0.85cm,align=center},
-        client/.style={rectangle,draw=black,line width=0.8pt,minimum width=2.8cm,minimum height=0.8cm,align=center},
+        font=\ReportDiagramFont,
+        layer/.style={rectangle,draw=black,line width=0.8pt,minimum width=7.2cm,minimum height=0.72cm,align=center},
+        client/.style={rectangle,draw=black,line width=0.8pt,minimum width=2.35cm,minimum height=0.72cm,align=center},
         flow/.style={-{Latex[length=2.2mm]},line width=0.8pt}
     ]
-        \node[client] (browser) at (0,3.6) {Browser};
-        \node[client] (postman) at (0,2.35) {Postman};
-        \node[client] (camera) at (0,1.1) {Camera Stream};
+        \node[client] (browser) at (0,3.45) {Browser};
+        \node[client] (postman) at (0,2.25) {Postman};
+        \node[client] (camera) at (0,1.05) {Camera\\Stream};
 
-        \draw[line width=0.8pt] (3.1,-0.35) rectangle (12.3,4.25);
-        \node[anchor=south west,font=\bfseries\ReportTableFont] at (3.1,4.25) {Host Machine};
-        \node[layer] (docker) at (7.7,3.45) {Docker Engine};
-        \node[layer] (container) at (7.7,2.55) {Container: ai-vision-service};
-        \node[layer] (uvicorn) at (7.7,1.65) {Uvicorn ASGI Server -- port 8000};
-        \node[layer] (fastapi) at (7.7,0.75) {FastAPI Application};
-        \node[layer] (model) at (7.7,-0.15) {YOLOv8n Model + Mock Fallback};
+        \draw[line width=0.8pt] (3.0,-0.95) rectangle (11.75,4.05);
+        \node[anchor=south west,font=\bfseries\ReportDiagramFont] at (3.0,4.05) {Host Machine};
+        \node[layer] (docker) at (7.35,3.35) {Docker Engine};
+        \node[layer] (container) at (7.35,2.45) {Container: ai-vision-service};
+        \node[layer] (uvicorn) at (7.35,1.55) {Uvicorn ASGI Server};
+        \node[layer] (fastapi) at (7.35,0.65) {FastAPI Application};
+        \node[layer] (model) at (7.35,-0.25) {YOLOv8n Model + Mock Fallback};
 
-        \draw[flow] (browser.east) -- node[above]{\texttt{/docs}} (docker.west);
-        \draw[flow] (postman.east) -- node[above]{REST API} (container.west);
-        \draw[flow] (camera.east) -- node[below]{\texttt{/api/v1/vision/detect}} (fastapi.west);
+        \draw[flow] (browser.east) -- node[midway,above,fill=white,inner sep=1pt]{\texttt{/docs}} (docker.west);
+        \draw[flow] (postman.east) -- node[midway,above,fill=white,inner sep=1pt]{REST} (container.west);
+        \draw[flow] (camera.east) -- ++(0.75,0) |- node[pos=0.72,left,fill=white,inner sep=1pt]{detect} (fastapi.west);
         \draw[flow] (fastapi) -- (model);
     \end{tikzpicture}
     \SodoCaption{Sơ đồ Deployment -- Kiến trúc Docker của AI Vision Service}{Nhóm thực hiện}

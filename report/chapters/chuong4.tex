@@ -157,31 +157,33 @@ Các trường dữ liệu AI Vision cung cấp cho Analytics gồm:
 
 \begin{sodo}[H]
     \centering
+    \resizebox{0.96\textwidth}{!}{%
     \begin{tikzpicture}[
-        font=\ReportTableFont,
-        svc/.style={rectangle,draw=black,line width=0.8pt,minimum width=2.55cm,minimum height=0.9cm,align=center},
+        font=\ReportDiagramFont,
+        svc/.style={rectangle,draw=black,line width=0.8pt,minimum width=2.2cm,minimum height=0.82cm,align=center},
         store/.style={cylinder,shape border rotate=90,aspect=0.25,draw=black,line width=0.8pt,minimum width=1.6cm,minimum height=1.0cm,align=center},
         flow/.style={-{Latex[length=2.2mm]},line width=0.8pt},
         async/.style={-{Latex[length=2.2mm]},dashed,line width=0.8pt}
     ]
         \node[svc] (camera) at (0,2.1) {Camera IP};
-        \node[svc] (stream) at (3.0,2.1) {A2\\Camera Stream};
-        \node[svc] (vision) at (6.0,2.1) {A4\\AI Vision};
-        \node[svc] (core) at (9.0,2.1) {A6\\Core Business};
-        \node[svc] (notify) at (12.0,2.1) {A7\\Notification};
+        \node[svc] (stream) at (3.2,2.1) {A2\\Camera Stream};
+        \node[svc] (vision) at (6.4,2.1) {A4\\AI Vision};
+        \node[svc] (core) at (9.6,2.1) {A6\\Core Business};
+        \node[svc] (notify) at (12.8,2.1) {A7\\Notification};
 
-        \node[store] (analytics) at (6.0,-0.45) {A5\\Analytics};
-        \node[svc,minimum width=2.9cm] (dashboard) at (9.0,-0.45) {Dashboard /\\Báo cáo};
+        \node[store] (analytics) at (6.4,-0.9) {A5\\Analytics};
+        \node[svc,minimum width=2.8cm] (dashboard) at (9.6,-0.9) {Dashboard /\\Báo cáo};
 
-        \draw[flow] (camera) -- node[above]{frame} (stream);
-        \draw[flow] (stream) -- node[above]{\texttt{frame\_url}} (vision);
-        \draw[flow] (vision) -- node[above]{camera event} (core);
-        \draw[flow] (core) -- node[above]{alert} (notify);
+        \draw[flow] (camera) -- node[midway,above,fill=white,inner sep=1pt]{frame} (stream);
+        \draw[flow] (stream) -- node[midway,above,fill=white,inner sep=1pt]{URL} (vision);
+        \draw[flow] (vision) -- node[midway,above,fill=white,inner sep=1pt]{event} (core);
+        \draw[flow] (core) -- node[midway,above,fill=white,inner sep=1pt]{alert} (notify);
 
-        \draw[async] (vision.south) -- node[right]{detection log} (analytics.north);
-        \draw[async] (core.south) -- node[right]{decision log} (dashboard.north);
-        \draw[flow] (analytics) -- node[below]{metrics} (dashboard);
+        \draw[async] (vision.south) -- node[midway,right,fill=white,inner sep=1pt]{detection log} (analytics.north);
+        \draw[async] (core.south) -- node[midway,right,fill=white,inner sep=1pt]{decision log} (dashboard.north);
+        \draw[flow] (analytics) -- node[midway,below,fill=white,inner sep=1pt]{metrics} (dashboard);
     \end{tikzpicture}
+    }
     \SodoCaption{Luồng xử lý End-to-End trong Smart Campus Product A}{Nhóm thực hiện}
     \label{fig:end-to-end}
 \end{sodo}
@@ -191,12 +193,12 @@ Các trường dữ liệu AI Vision cung cấp cho Analytics gồm:
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[
-    font=\ReportTableFont,
+    font=\ReportDiagramFont,
     panel/.style={rectangle,draw=black,line width=0.8pt,minimum width=12.4cm,minimum height=6.0cm,align=left},
     row/.style={rectangle,draw=black,line width=0.5pt,minimum width=10.8cm,minimum height=0.62cm,align=left}
 ]
     \node[panel] at (0,0) {};
-    \node[anchor=north west,font=\bfseries\ReportTableFont] at (-5.95,2.75) {Swagger UI};
+    \node[anchor=north west,font=\bfseries\ReportDiagramFont] at (-5.95,2.75) {Swagger UI};
     \node[anchor=north west] at (-5.95,2.25) {\texttt{/docs} -- AI Vision Service};
     \node[row,fill=gray!10] at (0,1.35) {\hspace{0.2cm}\textbf{GET} \texttt{/health} \hfill Health check};
     \node[row,fill=gray!10] at (0,0.55) {\hspace{0.2cm}\textbf{GET} \texttt{/model} \hfill Model status};
@@ -212,12 +214,12 @@ Các trường dữ liệu AI Vision cung cấp cho Analytics gồm:
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[
-    font=\ReportTableFont,
+    font=\ReportDiagramFont,
     panel/.style={rectangle,draw=black,line width=0.8pt,minimum width=12.4cm,minimum height=6.0cm,align=left},
     cell/.style={rectangle,draw=black,line width=0.5pt,minimum height=0.62cm,align=left}
 ]
     \node[panel] at (0,0) {};
-    \node[anchor=north west,font=\bfseries\ReportTableFont] at (-5.95,2.75) {Postman Collection -- AI Vision};
+    \node[anchor=north west,font=\bfseries\ReportDiagramFont] at (-5.95,2.75) {Postman Collection -- AI Vision};
     \node[cell,minimum width=3.3cm,fill=gray!10] at (-4.0,1.55) {\hspace{0.15cm}Request};
     \node[cell,minimum width=3.3cm,fill=gray!10] at (-0.45,1.55) {\hspace{0.15cm}Status};
     \node[cell,minimum width=3.3cm,fill=gray!10] at (3.1,1.55) {\hspace{0.15cm}Result};
@@ -241,12 +243,12 @@ Các trường dữ liệu AI Vision cung cấp cho Analytics gồm:
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[
-    font=\ReportTableFont,
+    font=\ReportDiagramFont,
     panel/.style={rectangle,draw=black,line width=0.8pt,minimum width=12.4cm,minimum height=5.2cm,align=left},
     row/.style={rectangle,draw=black,line width=0.5pt,minimum width=10.8cm,minimum height=0.64cm,align=left}
 ]
     \node[panel] at (0,0) {};
-    \node[anchor=north west,font=\bfseries\ReportTableFont] at (-5.95,2.35) {Docker Compose};
+    \node[anchor=north west,font=\bfseries\ReportDiagramFont] at (-5.95,2.35) {Docker Compose};
     \node[anchor=north west] at (-5.95,1.9) {\texttt{docker compose ps}};
     \node[row,fill=gray!10] at (0,0.95) {\hspace{0.2cm}NAME \hfill STATUS \hfill PORTS};
     \node[row] at (0,0.15) {\hspace{0.2cm}ai-vision-service \hfill Up \hfill 0.0.0.0:8000->8000/tcp};

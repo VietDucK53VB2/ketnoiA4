@@ -7,24 +7,18 @@ AI Vision Service được thiết kế theo mô hình layered architecture vớ
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[
-    font=\ReportTableFont,
-    layer/.style={rectangle,draw=black,line width=0.8pt,minimum width=10.8cm,minimum height=1.0cm,align=center},
-    note/.style={rectangle,draw=black,line width=0.6pt,minimum width=3.0cm,minimum height=0.75cm,align=center},
+    font=\ReportDiagramFont,
+    layer/.style={rectangle,draw=black,line width=0.8pt,minimum width=11.8cm,minimum height=0.95cm,align=center},
     flow/.style={-{Latex[length=2.2mm]},line width=0.8pt}
 ]
-    \node[layer] (api) at (0,3.3) {\textbf{API Layer}\\FastAPI router, request validation, JSON response};
-    \node[layer] (business) at (0,2.05) {\textbf{Business Layer}\\Detection engine, Pydantic model, risk decision};
+    \node[layer] (api) at (0,3.3) {\textbf{API Layer} -- \texttt{app/main.py}\\FastAPI router, request validation, JSON response};
+    \node[layer] (business) at (0,2.05) {\textbf{Business Layer} -- \texttt{app/vision.py}\\Detection engine, Pydantic model, risk decision};
     \node[layer] (integration) at (0,0.8) {\textbf{Integration Layer}\\HTTP client, A2 input contract, A6/A5 adapter};
     \node[layer] (infra) at (0,-0.45) {\textbf{Infrastructure Layer}\\In-memory store, Docker container, Uvicorn server};
 
     \draw[flow] (api) -- (business);
     \draw[flow] (business) -- (integration);
     \draw[flow] (integration) -- (infra);
-
-    \node[note] at (-5.0,3.3) {\texttt{app/main.py}};
-    \node[note] at (5.0,2.05) {\texttt{app/vision.py}};
-    \node[note] at (-5.0,0.8) {\texttt{httpx}\\OpenAPI};
-    \node[note] at (5.0,-0.45) {Docker\\Uvicorn};
 \end{tikzpicture}
 \caption{Kiến trúc phân tầng của AI Vision Service}
 \label{fig:layered-arch}
@@ -35,31 +29,33 @@ AI Vision Service được thiết kế theo mô hình layered architecture vớ
 
 \begin{sodo}[H]
     \centering
+    \resizebox{0.96\textwidth}{!}{%
     \begin{tikzpicture}[
-        font=\ReportTableFont,
-        actor/.style={rectangle,draw=black,line width=0.8pt,minimum width=2.6cm,minimum height=0.72cm,align=center},
+        font=\ReportDiagramFont,
+        actor/.style={rectangle,draw=black,line width=0.8pt,minimum width=2.25cm,minimum height=0.72cm,align=center},
         lifeline/.style={draw=black,dashed,line width=0.6pt},
         msg/.style={-{Latex[length=2.2mm]},line width=0.75pt},
         ret/.style={-{Latex[length=2.2mm]},dashed,line width=0.75pt}
     ]
         \node[actor] (a2) at (0,0) {A2\\Camera Stream};
-        \node[actor] (api) at (3.1,0) {FastAPI\\Router};
-        \node[actor] (fetch) at (6.0,0) {HTTP Client\\OpenCV};
-        \node[actor] (engine) at (8.9,0) {YOLO /\\Mock AI};
-        \node[actor] (store) at (11.8,0) {Detection\\Store};
+        \node[actor] (api) at (3.2,0) {FastAPI\\Router};
+        \node[actor] (fetch) at (6.4,0) {HTTP Client\\OpenCV};
+        \node[actor] (engine) at (9.6,0) {YOLO /\\Mock AI};
+        \node[actor] (store) at (12.8,0) {Detection\\Store};
 
-        \foreach \x in {0,3.1,6.0,8.9,11.8} {
-            \draw[lifeline] (\x,-0.45) -- (\x,-5.3);
+        \foreach \x in {0,3.2,6.4,9.6,12.8} {
+            \draw[lifeline] (\x,-0.45) -- (\x,-5.75);
         }
 
-        \draw[msg] (0,-0.9) -- node[above]{1. \texttt{POST /detect}} (3.1,-0.9);
-        \draw[msg] (3.1,-1.65) -- node[above]{2. tải \texttt{frame\_url}} (6.0,-1.65);
-        \draw[ret] (6.0,-2.25) -- node[above]{3. image bytes} (3.1,-2.25);
-        \draw[msg] (3.1,-2.95) -- node[above]{4. analyze image} (8.9,-2.95);
-        \draw[ret] (8.9,-3.55) -- node[above]{5. finding + confidence} (3.1,-3.55);
-        \draw[msg] (3.1,-4.2) -- node[above]{6. save result} (11.8,-4.2);
-        \draw[ret] (3.1,-4.85) -- node[above]{7. \texttt{DetectionResult}} (0,-4.85);
+        \draw[msg] (0,-0.95) -- node[midway,above,fill=white,inner sep=1pt]{1. POST detect} (3.2,-0.95);
+        \draw[msg] (3.2,-1.75) -- node[midway,above,fill=white,inner sep=1pt]{2. fetch frame} (6.4,-1.75);
+        \draw[ret] (6.4,-2.45) -- node[midway,above,fill=white,inner sep=1pt]{3. image bytes} (3.2,-2.45);
+        \draw[msg] (3.2,-3.15) -- node[midway,above,fill=white,inner sep=1pt]{4. analyze} (9.6,-3.15);
+        \draw[ret] (9.6,-3.85) -- node[midway,above,fill=white,inner sep=1pt]{5. finding} (3.2,-3.85);
+        \draw[msg] (3.2,-4.55) -- node[midway,above,fill=white,inner sep=1pt]{6. save} (12.8,-4.55);
+        \draw[ret] (3.2,-5.25) -- node[midway,above,fill=white,inner sep=1pt]{7. result} (0,-5.25);
     \end{tikzpicture}
+    }
     \SodoCaption{Sequence Diagram -- Luồng xử lý một detection request}{Nhóm thực hiện}
     \label{fig:sequence}
 \end{sodo}
