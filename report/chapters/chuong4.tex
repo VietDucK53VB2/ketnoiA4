@@ -18,7 +18,8 @@ Một trong những yêu cầu quan trọng nhất của bài tập lớn là se
 \centering
 \caption{So sánh giao tiếp đồng bộ và bất đồng bộ}
 \label{tab:sync-async}
-\begin{tabular}{|p{3cm}|p{5cm}|p{5cm}|}
+\small
+\begin{tabular}{|>{\raggedright\arraybackslash}p{3cm}|>{\raggedright\arraybackslash}p{5cm}|>{\raggedright\arraybackslash}p{5cm}|}
 \hline
 \textbf{Tiêu chí} & \textbf{Đồng bộ (REST API)} & \textbf{Bất đồng bộ (Message Queue)} \\
 \hline
@@ -33,6 +34,7 @@ Coupling & Tight, caller chờ callee & Loose, decoupled \\
 Phù hợp & Cần kết quả ngay & Xử lý nền, broadcasting \\
 \hline
 \end{tabular}
+\normalsize
 \Nguon{Nhóm thực hiện}
 \end{table}
 
@@ -82,7 +84,8 @@ Nhóm implement Adapter Pattern để chuyển \texttt{\detokenize{DetectionResu
 \centering
 \caption{Mapping giữa AI Vision và Core Business}
 \label{tab:ai-core-mapping}
-\begin{tabular}{|p{4cm}|p{4cm}|p{5cm}|}
+\small
+\begin{tabular}{|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{5cm}|}
 \hline
 \textbf{AI Vision} & \textbf{Core Business} & \textbf{Ghi chú} \\
 \hline
@@ -97,6 +100,7 @@ finding(person, conf $\geq$ 0.6) & unknown_person=true & Phát hiện người l
 risk_level(low/medium/high) & risk_level(normal/warning/critical) & Map 3 mức sang 3 mức \\
 \hline
 \end{tabular}
+\normalsize
 \Nguon{Nhóm thực hiện}
 \end{table}
 
@@ -108,7 +112,8 @@ AI Vision không chỉ trả về kết quả phân tích mà còn tự động 
 \centering
 \caption{Matrận quyết định của AI Vision}
 \label{tab:decision-matrix}
-\begin{tabular}{|p{4.2cm}|p{2.2cm}|p{3.2cm}|p{4.6cm}|}
+\small
+\begin{tabular}{|>{\raggedright\arraybackslash}p{4.2cm}|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{4.6cm}|}
 \hline
 \textbf{Kịch bản} & \textbf{risk\_level} & \textbf{core\_decision} & \textbf{reason} \\
 \hline
@@ -123,6 +128,7 @@ Phát hiện đối tượng, conf $< 0.85$ & warning & alert\_required & object
 Phát hiện đối tượng, conf $\geq 0.85$ & critical & alert\_required & object\_detected\_high\_conf \\
 \hline
 \end{tabular}
+\normalsize
 \Nguon{Nhóm thực hiện}
 \end{table}
 
@@ -167,7 +173,8 @@ Các trường dữ liệu AI Vision cung cấp cho Analytics gồm:
 \centering
 \caption{Tự đánh giá chi tiết theo Rubric}
 \label{tab:rubric}
-\begin{tabular}{|p{3.8cm}|p{1.8cm}|p{2.2cm}|p{5.8cm}|}
+\small
+\begin{tabular}{|>{\raggedright\arraybackslash}p{3.6cm}|>{\raggedright\arraybackslash}p{1.8cm}|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}p{5.8cm}|}
 \hline
 \textbf{Tiêu chí} & \textbf{Trọng số} & \textbf{Mức đạt} & \textbf{Minh chứng} \\
 \hline
@@ -184,6 +191,7 @@ Integration & 20\% & Đạt & Kết nối A2, adapter cho A6, hợp đồng vớ
 Trình bày & 15\% & Tốt & \texttt{\detokenize{PRESENTATION.md}}, kịch bản 1 phút, thứ tự demo rõ ràng \\
 \hline
 \end{tabular}
+\normalsize
 \Nguon{Nhóm thực hiện}
 \end{table}
 
@@ -193,7 +201,8 @@ Trình bày & 15\% & Tốt & \texttt{\detokenize{PRESENTATION.md}}, kịch bản
 \centering
 \caption{Phân công công việc nhóm A4}
 \label{tab:assignment}
-\begin{tabular}{|p{4cm}|p{3.2cm}|p{5.5cm}|p{1.8cm}|}
+\small
+\begin{tabular}{|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{5.5cm}|>{\raggedright\arraybackslash}p{1.8cm}|}
 \hline
 \textbf{Thành viên} & \textbf{Vai trò} & \textbf{Nhiệm vụ chính} & \textbf{Tỷ trọng} \\
 \hline
@@ -204,6 +213,7 @@ Trình bày & 15\% & Tốt & \texttt{\detokenize{PRESENTATION.md}}, kịch bản
 \textbf{Lê Quang Dũng} & DevOps / Report & Docker, docker-compose, minh chứng vận hành, hỗ trợ tổng hợp báo cáo, phụ lục và kiểm tra bản dựng & 30\% \\
 \hline
 \end{tabular}
+\normalsize
 \Nguon{Nhóm thực hiện}
 \end{table}
 
@@ -211,7 +221,7 @@ Trình bày & 15\% & Tốt & \texttt{\detokenize{PRESENTATION.md}}, kịch bản
 
 \begin{table}[H]
 \centering
-\begin{tabular}{|>{\centering\arraybackslash}p{5cm}|>{\centering\arraybackslash}p{5cm}|>{\centering\arraybackslash}p{5cm}|}
+\begin{tabular}{|>{\centering\arraybackslash}p{4.8cm}|>{\centering\arraybackslash}p{4.8cm}|>{\centering\arraybackslash}p{4.8cm}|}
 \hline
 \textbf{Nguyễn Quang Đạt} & \textbf{Trịnh Việt Đức} & \textbf{Lê Quang Dũng} \\
 \hline
@@ -263,7 +273,8 @@ Hai hạn chế chính hiện tại là lưu trữ không bền vững và chưa
 \centering
 \caption{So sánh phương án lưu trữ và xác thực}
 \label{tab:security-options}
-\begin{tabular}{|p{3cm}|p{3.2cm}|p{3.2cm}|p{3.2cm}|}
+\small
+\begin{tabular}{|>{\raggedright\arraybackslash}p{3cm}|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{3.2cm}|}
 \hline
 \textbf{Tiêu chí} & \textbf{Hiện tại} & \textbf{PostgreSQL + JWT} & \textbf{Redis + API Key} \\
 \hline
@@ -278,6 +289,7 @@ Xác thực & Không có & JWT & API Key \\
 Phù hợp & Demo & Production & Production nhẹ \\
 \hline
 \end{tabular}
+\normalsize
 \Nguon{Nhóm thực hiện}
 \end{table}
 

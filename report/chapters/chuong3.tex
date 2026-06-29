@@ -8,7 +8,8 @@ AI Vision Service đã được cài đặt đầy đủ 11 chức năng theo y�
 \centering
 \caption{Trạng thái hoàn thành các chức năng}
 \label{tab:function-status}
-\begin{tabular}{|p{5.2cm}|p{2.8cm}|p{6cm}|}
+\small
+\begin{tabular}{|>{\raggedright\arraybackslash}p{5.2cm}|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{6cm}|}
 \hline
 \textbf{Chức năng} & \textbf{Trạng thái} & \textbf{Minh chứng} \\
 \hline
@@ -35,6 +36,7 @@ Docker + Compose & Hoàn thành & \texttt{\detokenize{Dockerfile}}, \texttt{\det
 Postman + Smoke test & Hoàn thành & \texttt{\detokenize{test_api.py}}, Postman collection \\
 \hline
 \end{tabular}
+\normalsize
 \Nguon{Nhóm thực hiện}
 \end{table}
 
@@ -89,7 +91,8 @@ Script smoke test tự động kiểm tra:
 \centering
 \caption{Postman Test Cases}
 \label{tab:postman-tests}
-\begin{tabular}{|p{4cm}|p{5cm}|p{2cm}|p{4cm}|}
+\small
+\begin{tabular}{|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{5cm}|>{\raggedright\arraybackslash}p{2cm}|>{\raggedright\arraybackslash}p{4cm}|}
 \hline
 \textbf{Test Case} & \textbf{Endpoint} & \textbf{Method} & \textbf{Kỳ vọng} \\
 \hline
@@ -108,6 +111,7 @@ Tra cứu kết quả & \texttt{\detokenize{/api/v1/vision/detections/{id}}} & G
 MockDemo & \texttt{\detokenize{/analyze/mock}} & POST & 200, \texttt{\detokenize{model_mode=mock-ai}} \\
 \hline
 \end{tabular}
+\normalsize
 \Nguon{Nhóm thực hiện}
 \end{table}
 
@@ -141,7 +145,8 @@ $ curl http://localhost:8000/model
 \centering
 \caption{Minh chứng vận hành AI Vision Service}
 \label{tab:runtime-proof}
-\begin{tabular}{|p{4cm}|p{5cm}|p{4cm}|}
+\small
+\begin{tabular}{|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{5cm}|>{\raggedright\arraybackslash}p{4cm}|}
 \hline
 \textbf{Hạng mục} & \textbf{Lệnh / Minh chứng} & \textbf{Kết quả} \\
 \hline
@@ -162,6 +167,7 @@ Swagger UI & Browser mở \texttt{\detokenize{/docs}} & OpenAPI docs \\
 Smoke test & \texttt{\detokenize{python test_api.py}} & Tất cả pass \\
 \hline
 \end{tabular}
+\normalsize
 \Nguon{Nhóm thực hiện}
 \end{table}
 
@@ -171,7 +177,8 @@ Smoke test & \texttt{\detokenize{python test_api.py}} & Tất cả pass \\
 \centering
 \caption{Kết quả phân tích ảnh mẫu bằng YOLOv8n}
 \label{tab:yolo-results}
-\begin{tabular}{|p{3.6cm}|p{2.5cm}|p{2cm}|p{2cm}|p{2.5cm}|p{2cm}|}
+\small
+\begin{tabular}{|>{\raggedright\arraybackslash}p{3.6cm}|>{\raggedright\arraybackslash}p{2.5cm}|>{\raggedright\arraybackslash}p{2cm}|>{\raggedright\arraybackslash}p{2cm}|>{\raggedright\arraybackslash}p{2.5cm}|>{\raggedright\arraybackslash}p{2cm}|}
 \hline
 \textbf{Ảnh} & \textbf{Đối tượng} & \textbf{Confidence} & \textbf{Risk} & \textbf{Thời gian} & \textbf{Model} \\
 \hline
@@ -186,6 +193,7 @@ URL lỗi (404) & - & - & - & 15s (timeout) & mock \\
 Mock mode & person/vehicle & 0.62-0.98 & low-high & <0.1s & mock-ai \\
 \hline
 \end{tabular}
+\normalsize
 \Nguon{Nhóm thực hiện}
 \end{table}
 
@@ -204,7 +212,8 @@ Mock mode & person/vehicle & 0.62-0.98 & low-high & <0.1s & mock-ai \\
 \centering
 \caption{Tài nguyên hệ thống khi chạy AI Vision Service}
 \label{tab:resources}
-\begin{tabular}{|p{4cm}|p{4cm}|p{5cm}|}
+\small
+\begin{tabular}{|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{5cm}|}
 \hline
 \textbf{Thành phần} & \textbf{Mức tiêu thụ} & \textbf{Ghi chú} \\
 \hline
@@ -221,6 +230,7 @@ CPU (inference) & 100\% của 1 core & YOLO chạy trên CPU \\
 Thời gian khởi động & khoảng 5 giây & FastAPI + lazy-load model \\
 \hline
 \end{tabular}
+\normalsize
 \Nguon{Nhóm thực hiện}
 \end{table}
 

@@ -30,7 +30,8 @@ Toàn bộ Product A bao gồm 7 service:
 \centering
 \caption{Các service trong Smart Campus Product A}
 \label{tab:services-product-a}
-\begin{tabular}{|p{2.2cm}|p{3.4cm}|p{4.1cm}|p{2.8cm}|}
+\small
+\begin{tabular}{|>{\raggedright\arraybackslash}p{2.0cm}|>{\raggedright\arraybackslash}p{3.1cm}|>{\raggedright\arraybackslash}p{4.4cm}|>{\raggedright\arraybackslash}p{3.0cm}|}
 \hline
 \textbf{Mã nhóm} & \textbf{Tên service} & \textbf{Vai trò} & \textbf{Độ phức tạp} \\
 \hline
@@ -49,6 +50,7 @@ A6 & Core Business & Xử lý nghiệp vụ trung tâm & Khó nhất \\
 A7 & Notification & Gửi thông báo đa kênh & Trung bình \\
 \hline
 \end{tabular}
+\normalsize
 \Nguon{Tài liệu học phần FIT4110}
 \end{table}
 
@@ -130,7 +132,8 @@ AI Vision Service nhận request từ Camera Stream với schema \texttt{\detoke
 \centering
 \caption{VisionDetectRequest - schema đầu vào}
 \label{tab:vision-request}
-\begin{tabular}{|p{3cm}|p{3cm}|p{2.5cm}|p{5cm}|}
+\small
+\begin{tabular}{|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{3.0cm}|>{\raggedright\arraybackslash}p{2.4cm}|>{\raggedright\arraybackslash}p{5.0cm}|}
 \hline
 \textbf{Trường} & \textbf{Kiểu dữ liệu} & \textbf{Bắt buộc} & \textbf{Mô tả} \\
 \hline
@@ -141,6 +144,7 @@ frame_url & string(URL) & Có & URL của ảnh cần phân tích, hỗ trợ al
 timestamp & datetime & Có & Thời điểm camera ghi nhận frame. \\
 \hline
 \end{tabular}
+\normalsize
 \Nguon{Nhóm thực hiện}
 \end{table}
 
@@ -150,7 +154,8 @@ timestamp & datetime & Có & Thời điểm camera ghi nhận frame. \\
 \centering
 \caption{DetectionResult - schema đầu ra}
 \label{tab:detection-result}
-\begin{tabular}{|p{3cm}|p{3cm}|p{9cm}|}
+\small
+\begin{tabular}{|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{8.2cm}|}
 \hline
 \textbf{Trường} & \textbf{Kiểu} & \textbf{Ý nghĩa} \\
 \hline
@@ -173,6 +178,7 @@ model_mode & string & \texttt{\detokenize{yolo}} hoặc \texttt{\detokenize{mock
 notes & string/null & Ghi chú bổ sung. \\
 \hline
 \end{tabular}
+\normalsize
 \Nguon{Nhóm thực hiện}
 \end{table}
 
