@@ -168,7 +168,9 @@
 
 \makeatletter
 \newcommand{\ReportListTable}[4]{%
+    \if\relax\detokenize{#1}\relax\else
     {\bfseries\fontsize{13pt}{14pt}\selectfont #1:\par}
+    \fi
     \vspace{6pt}
     \begingroup
     \fontsize{12pt}{13pt}\selectfont
@@ -202,7 +204,7 @@
     \vspace{14pt}
     \ReportListTable{SƠ ĐỒ}{Tên sơ đồ}{Sơ đồ}{los}
     \vspace{14pt}
-    \ReportListTable{HÌNH}{Tên hình}{Hình}{lof}
+    \ReportListTable{}{Tên hình}{Hình}{lof}
 }
 \makeatother
 
