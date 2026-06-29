@@ -1,37 +1,44 @@
 \appendix
 \UnnumberedChapter{PHỤ LỤC}
 
-\section*{Phụ lục 1. Danh sách endpoint}
+\noindent\textbf{Phụ lục 1. Cấu trúc thư mục dự án}
 
-\begin{itemize}
-    \item `GET /health`
-    \item `GET /model`
-    \item `POST /api/v1/vision/detect`
-    \item `GET /api/v1/vision/detections/{detection_id}`
-    \item `POST /api/v1/events/camera`
-    \item `POST /analyze`
-    \item `POST /analyze/mock`
-\end{itemize}
+\begin{verbatim}
+ai-vision/
+|-- app/
+| |-- main.py
+| |-- vision.py
+| |-- models/
+| | `-- schemas.py
+| |-- routes/
+| | |-- camera.py
+| | |-- vision.py
+| | `-- health.py
+| `-- services/
+| |-- core_business_client.py
+| |-- log_store.py
+| |-- detection_store.py
+| `-- mock_ai.py
+|-- openapi.yaml
+|-- Dockerfile
+|-- docker-compose.yml
+`-- requirements.txt
+\end{verbatim}
 
-\section*{Phụ lục 2. Gợi ý kiểm thử trình diễn}
+\noindent\textbf{Phụ lục 2. Một số lệnh chạy và kiểm thử}
 
-\begin{enumerate}
-    \item Mở dashboard tại `/`.
-    \item Kiểm tra `/health`.
-    \item Kiểm tra `/model`.
-    \item Gửi một request thật tới `/api/v1/vision/detect`.
-    \item Gửi một request mock nếu cần demo ổn định.
-    \item Mở `openapi.yaml` hoặc Swagger UI để minh họa tài liệu API.
-\end{enumerate}
+\begin{verbatim}
+# Chạy trực tiếp
+pip install -r requirements.txt
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
-\section*{Phụ lục 3. Tài liệu đi kèm}
+# Chạy bằng Docker
+docker compose up --build
 
-\begin{itemize}
-    \item `README.md`
-    \item `API_CONTRACT.md`
-    \item `PRESENTATION.md`
-    \item `A4_TO_A5_ANALYTICS_CONTRACT.md`
-    \item `openapi.yaml`
-    \item `postman/ai-vision.postman_collection.json`
-    \item `postman/ai-vision.postman_environment.json`
-\end{itemize}
+# Kiểm tra health
+curl http://localhost:8000/health
+\end{verbatim}
+
+\noindent\textbf{Phụ lục 3. Link mã nguồn}
+
+Mã nguồn dự án: \url{https://github.com/VietDucK53VB2/ketnoiA4}
