@@ -60,6 +60,38 @@ A7 & Notification & Gửi thông báo đa kênh & Trung bình \\
 
 YOLO là một trong những mô hình phát hiện đối tượng phổ biến nhất hiện nay, với cách tiếp cận "nhìn toàn bộ ảnh đúng một lần" để dự đoán đồng thời bounding box và class probability. Trong AI Vision Service, nhóm sử dụng YOLOv8n, phiên bản nhẹ nhất, phù hợp với môi trường học tập và demo nhưng vẫn giữ được độ chính xác chấp nhận được.
 
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    font=\ReportTableFont,
+    box/.style={rectangle,draw=black,line width=0.8pt,minimum height=1.05cm,align=center},
+    flow/.style={-{Latex[length=2.2mm]},line width=0.8pt}
+]
+    \node[box,minimum width=2.6cm] (input) at (0,0) {Ảnh đầu vào\\640 x 640};
+    \node[box,minimum width=2.9cm] (backbone) at (3.4,0) {Backbone\\trích xuất đặc trưng};
+    \node[box,minimum width=2.6cm] (neck) at (6.8,0) {Neck\\gộp đa tỉ lệ};
+    \node[box,minimum width=2.5cm] (head) at (10.0,0) {Head\\dự đoán};
+    \node[box,minimum width=2.9cm] (output) at (13.2,0) {Bounding box\\class + confidence};
+
+    \draw[flow] (input) -- (backbone);
+    \draw[flow] (backbone) -- (neck);
+    \draw[flow] (neck) -- (head);
+    \draw[flow] (head) -- (output);
+
+    \draw[black,line width=0.6pt] (-0.95,-1.55) rectangle (0.95,-0.65);
+    \draw[black,line width=0.6pt] (-0.65,-1.35) rectangle (0.15,-0.82);
+    \node at (0,-1.9) {Input image};
+
+    \node[box,minimum width=1.7cm,minimum height=0.65cm] at (3.4,-1.1) {C2f};
+    \node[box,minimum width=1.7cm,minimum height=0.65cm] at (6.8,-1.1) {FPN/PAN};
+    \node[box,minimum width=1.7cm,minimum height=0.65cm] at (10.0,-1.1) {Detect};
+    \node[align=center] at (13.2,-1.25) {person 0.91\\vehicle 0.87};
+\end{tikzpicture}
+\caption{Kiến trúc tổng quan của YOLOv8}
+\label{fig:yolov8-architecture}
+\Nguon{Nhóm thực hiện tổng hợp từ tài liệu Ultralytics}
+\end{figure}
+
 \subsection{FastAPI - web framework hiện đại cho Python}
 
 FastAPI là web framework Python được xây dựng trên Starlette và Pydantic, nổi bật với hiệu năng cao, hỗ trợ type hints, sinh OpenAPI tự động và hỗ trợ async/await tốt. Đây là lựa chọn phù hợp cho service cần nhận request, tải ảnh từ URL và trả kết quả ngay.
@@ -200,17 +232,29 @@ A6 - Core Business nhận kết quả phát hiện qua adapter endpoint \Code{PO
 
 \begin{sodo}[H]
     \centering
-    \ReportTableFont
-    \fbox{\parbox[c][5.5cm][c]{0.78\textwidth}{\centering
-    A2 Camera Stream (Provider)\\[2pt]
-    $\downarrow$\\[2pt]
-    A4 - AI Vision Service\\[2pt]
-    Input: \Code{frame_url}\\
-    Xử lý: YOLOv8n / Mock AI\\
-    Output: \Code{DetectionResult}\\
-    Adapter: \Code{CoreCameraEvent}\\[2pt]
-    $\downarrow$\\[2pt]
-    A6 Core Business, A5 Analytics (Consumers)}}
+    \begin{tikzpicture}[
+        font=\ReportTableFont,
+        ext/.style={rectangle,draw=black,line width=0.8pt,minimum width=3.0cm,minimum height=0.9cm,align=center},
+        svc/.style={rectangle,draw=black,line width=0.8pt,minimum width=3.2cm,minimum height=0.8cm,align=center},
+        flow/.style={-{Latex[length=2.2mm]},line width=0.8pt}
+    ]
+        \node[ext] (camera) at (0,1.8) {A2\\Camera Stream};
+        \node[ext] (core) at (11.5,2.7) {A6\\Core Business};
+        \node[ext] (analytics) at (11.5,0.9) {A5\\Analytics};
+
+        \draw[dashed,line width=0.7pt] (3.0,-0.25) rectangle (8.75,3.75);
+        \node[anchor=south east,font=\bfseries\ReportTableFont] at (8.75,3.75) {AI Vision Service (A4)};
+
+        \node[svc] (api) at (5.85,3.0) {API Router\\\texttt{/vision/detect}};
+        \node[svc] (engine) at (5.85,1.85) {Detection Engine\\YOLOv8n / Mock AI};
+        \node[svc] (adapter) at (5.85,0.7) {Adapter + Store\\DetectionResult};
+
+        \draw[flow] (camera.east) -- node[above]{\texttt{frame\_url}} (api.west);
+        \draw[flow] (api) -- (engine);
+        \draw[flow] (engine) -- (adapter);
+        \draw[flow] (adapter.east) -- node[above,sloped]{CoreCameraEvent} (core.west);
+        \draw[flow] (adapter.east) -- node[below,sloped]{Detection log} (analytics.west);
+    \end{tikzpicture}
     \SodoCaption{Sơ đồ Service Boundary của AI Vision Service trong Product A}{Nhóm thực hiện}
     \label{fig:service-boundary}
 \end{sodo}
@@ -267,16 +311,30 @@ A6 - Core Business nhận kết quả phát hiện qua adapter endpoint \Code{PO
 
 \begin{sodo}[H]
     \centering
-    \ReportTableFont
-    \fbox{\parbox[c][5.5cm][c]{0.76\textwidth}{\centering
-    Host Machine (Windows/Linux)\\[2pt]
-    Docker Engine\\
-    Container: ai-vision-service\\
-    Uvicorn ASGI Server\\
-    FastAPI Application\\
-    YOLOv8n Model\\
-    HTTP Client / Browser / Postman}}
-    \SodoCaption{Sơ đồ Deployment - kiến trúc Docker của AI Vision Service}{Nhóm thực hiện}
+    \begin{tikzpicture}[
+        font=\ReportTableFont,
+        layer/.style={rectangle,draw=black,line width=0.8pt,minimum width=7.6cm,minimum height=0.85cm,align=center},
+        client/.style={rectangle,draw=black,line width=0.8pt,minimum width=2.8cm,minimum height=0.8cm,align=center},
+        flow/.style={-{Latex[length=2.2mm]},line width=0.8pt}
+    ]
+        \node[client] (browser) at (0,3.6) {Browser};
+        \node[client] (postman) at (0,2.35) {Postman};
+        \node[client] (camera) at (0,1.1) {Camera Stream};
+
+        \draw[line width=0.8pt] (3.1,-0.35) rectangle (12.3,4.25);
+        \node[anchor=south west,font=\bfseries\ReportTableFont] at (3.1,4.25) {Host Machine};
+        \node[layer] (docker) at (7.7,3.45) {Docker Engine};
+        \node[layer] (container) at (7.7,2.55) {Container: ai-vision-service};
+        \node[layer] (uvicorn) at (7.7,1.65) {Uvicorn ASGI Server -- port 8000};
+        \node[layer] (fastapi) at (7.7,0.75) {FastAPI Application};
+        \node[layer] (model) at (7.7,-0.15) {YOLOv8n Model + Mock Fallback};
+
+        \draw[flow] (browser.east) -- node[above]{\texttt{/docs}} (docker.west);
+        \draw[flow] (postman.east) -- node[above]{REST API} (container.west);
+        \draw[flow] (camera.east) -- node[below]{\texttt{/api/v1/vision/detect}} (fastapi.west);
+        \draw[flow] (fastapi) -- (model);
+    \end{tikzpicture}
+    \SodoCaption{Sơ đồ Deployment -- Kiến trúc Docker của AI Vision Service}{Nhóm thực hiện}
     \label{fig:deployment}
 \end{sodo}
 
