@@ -25,7 +25,23 @@ AI Vision Service được thiết kế theo mô hình layered architecture vớ
 \Nguon{Nhóm thực hiện}
 \end{figure}
 
-\section{Luồng xử lý chi tiết}
+\subsection{Tầng API (Presentation Layer)}
+
+Tầng API nằm chủ yếu trong \Code{app/main.py}, tiếp nhận request từ Camera Stream, validate dữ liệu bằng Pydantic và trả response JSON theo contract đã công bố.
+
+\subsection{Tầng nghiệp vụ (Business Logic Layer)}
+
+Tầng nghiệp vụ chứa logic phân tích ảnh trong \Code{app/vision.py}, gồm lazy-load YOLOv8n, fallback mock AI, chuẩn hóa finding và xác định mức rủi ro.
+
+\subsection{Tầng tích hợp (Integration Layer)}
+
+Tầng tích hợp xử lý kết nối giữa AI Vision với các service khác: nhận input contract từ A2, chuyển đổi dữ liệu sang Core Business A6 và cung cấp detection log cho Analytics A5.
+
+\subsection{Tầng hạ tầng (Infrastructure Layer)}
+
+Tầng hạ tầng gồm Uvicorn server, Docker container, biến môi trường mẫu và \Code{DETECTION_STORE} trong bộ nhớ để phục vụ demo nhanh.
+
+\section{Luồng xử lý chi tiết -- Sequence Diagram}
 
 \begin{sodo}[H]
     \centering
@@ -114,7 +130,7 @@ risk\_level & risk\_level & Map mức rủi ro sang hệ nghiệp vụ. \\
 \Nguon{Nhóm thực hiện}
 \end{table}
 
-\subsection{ProblemDetails - error model}
+\subsection{ProblemDetails - RFC 9457 error model}
 
 Service chuẩn hóa lỗi theo cấu trúc \Code{ProblemDetails}. Nhờ vậy, consumer có thể đọc lỗi một cách nhất quán thay vì phải xử lý nhiều định dạng phản hồi khác nhau.
 
@@ -211,6 +227,8 @@ Phát hiện đối tượng, conf $\geq$ 0.85 & \TableCode{critical} & \TableCo
 \normalsize
 \Nguon{Nhóm thực hiện}
 \end{table}
+
+\section{Cấu trúc Repository}
 
 \begin{table}[H]
 \centering
