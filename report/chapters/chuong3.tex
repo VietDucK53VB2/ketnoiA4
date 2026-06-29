@@ -152,7 +152,7 @@ Docker run & \Code{docker compose up} & Container running \\
 \hline
 Healthcheck & \Code{curl /health} & 200 OK \\
 \hline
-Model status & \Code{curl /model} & \Code{mode: yolo} \\
+Model status & \Code{curl /model} & \Code{mode: yolo/mock-ai} \\
 \hline
 Detection test & \Code{curl POST /api/v1/vision/detect} & 200, \Code{detection_id} \\
 \hline
@@ -166,6 +166,14 @@ Smoke test & \Code{python test_api.py} & Tất cả pass \\
 \normalsize
 \Nguon{Nhóm thực hiện}
 \end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.96\textwidth]{images/dashboard-ui.png}
+\caption{Dashboard -- Giao diện kiểm tra nhanh của AI Vision Service}
+\label{fig:dashboard-ui}
+\Nguon{Ảnh chụp từ giao diện Dashboard của AI Vision Service}
+\end{figure}
 
 \section{Đánh giá hiệu năng mô hình YOLO}
 
