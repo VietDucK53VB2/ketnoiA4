@@ -6,23 +6,25 @@
 \begin{verbatim}
 ai-vision/
 |-- app/
-| |-- main.py
-| |-- vision.py
-| |-- models/
-| | `-- schemas.py
-| |-- routes/
-| | |-- camera.py
-| | |-- vision.py
-| | `-- health.py
-| `-- services/
-| |-- core_business_client.py
-| |-- log_store.py
-| |-- detection_store.py
-| `-- mock_ai.py
+|   |-- __init__.py
+|   |-- main.py
+|   `-- vision.py
+|-- postman/
+|   |-- ai-vision.postman_collection.json
+|   `-- ai-vision.postman_environment.json
+|-- report/
+|   |-- main.tex
+|   |-- settings.tex
+|   `-- images/
 |-- openapi.yaml
+|-- API_CONTRACT.md
+|-- A4_TO_A5_ANALYTICS_CONTRACT.md
+|-- PRESENTATION.md
 |-- Dockerfile
 |-- docker-compose.yml
-`-- requirements.txt
+|-- .env.example
+|-- requirements.txt
+`-- test_api.py
 \end{verbatim}
 
 \noindent\textbf{Phụ lục 2. Một số lệnh chạy và kiểm thử}

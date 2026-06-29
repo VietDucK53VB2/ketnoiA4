@@ -24,7 +24,12 @@ from app.vision import analyze_image, get_model_status
 class CameraFrameIn(BaseModel):
     """Legacy input model for backward-compatible callers."""
     camera_id: str = Field(..., examples=["cam-gate-01"])
-    image_url: HttpUrl = Field(..., examples=["http://example.com/frame.jpg"])
+    frame_url: HttpUrl = Field(
+        ...,
+        validation_alias=AliasChoices("frame_url", "image_url"),
+        serialization_alias="frame_url",
+        examples=["http://example.com/frame.jpg"],
+    )
     timestamp: datetime = Field(..., examples=["2026-05-02T09:10:00"])
 
 
@@ -899,7 +904,7 @@ async def camera_event_adapter(frame: VisionDetectRequest):
 async def analyze(frame: CameraFrameIn):
     """Backward-compatible adapter for older consumers."""
     detection = await _run_detection(
-        VisionDetectRequest(camera_id=frame.camera_id, frame_url=frame.image_url, timestamp=frame.timestamp)
+        VisionDetectRequest(camera_id=frame.camera_id, frame_url=frame.frame_url, timestamp=frame.timestamp)
     )
     legacy = DetectionOut(
         detected=detection.anomaly_detected,

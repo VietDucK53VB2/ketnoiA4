@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import random
+import os
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -13,7 +14,7 @@ except Exception:  # pragma: no cover - optional dependency fallback
     YOLO = None
 
 
-MODEL_NAME = "yolov8n.pt"
+MODEL_NAME = os.getenv("MODEL_NAME", "yolov8n.pt")
 _MODEL = None
 
 

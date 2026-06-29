@@ -5,9 +5,9 @@ services:
       dockerfile: Dockerfile
     container_name: ai-vision-service
     ports:
-      - "8000:8000"
+      - "${APP_PORT:-8000}:8000"
     environment:
       - PYTHONDONTWRITEBYTECODE=1
       - PYTHONUNBUFFERED=1
+      - MODEL_NAME=${MODEL_NAME:-yolov8n.pt}
     restart: unless-stopped
-
