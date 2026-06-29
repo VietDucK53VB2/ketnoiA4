@@ -55,24 +55,33 @@ Module này chịu trách nhiệm toàn bộ logic AI. Nó có các thành phầ
 
 \texttt{\detokenize{main.py}} là "mặt tiền" của service. Mã nguồn gồm:
 
+\small
 \begin{itemize}
-    \item Pydantic models: \texttt{\detokenize{VisionDetectRequest}}, \texttt{\detokenize{DetectionResult}}, \texttt{\detokenize{CoreCameraEvent}}, \texttt{\detokenize{ProblemDetails}}.
-    \item Helper functions: \texttt{\detokenize{_problem}}, \texttt{\detokenize{_fetch_image_bytes}}, \texttt{\detokenize{_build_finding}}, \texttt{\detokenize{_store_detection}}, \texttt{\detokenize{_map_to_core_camera_event}}, \texttt{\detokenize{_run_detection}}.
+    \item Pydantic models:
+    \newline \texttt{\detokenize{VisionDetectRequest}}, \texttt{\detokenize{DetectionResult}}
+    \newline \texttt{\detokenize{CoreCameraEvent}}, \texttt{\detokenize{ProblemDetails}}.
+    \item Helper functions:
+    \newline \texttt{\detokenize{_problem}}, \texttt{\detokenize{_fetch_image_bytes}}
+    \newline \texttt{\detokenize{_build_finding}}, \texttt{\detokenize{_store_detection}}
+    \newline \texttt{\detokenize{_map_to_core_camera_event}}, \texttt{\detokenize{_run_detection}}.
     \item Dashboard HTML template.
     \item Route handlers cho 7 endpoint.
 \end{itemize}
+\normalsize
 
 \subsection{test_api.py - Smoke Test Automation}
 
 Script smoke test tự động kiểm tra:
 
+\small
 \begin{enumerate}
     \item Health check.
     \item Model status.
     \item Main detection.
-    \item Lookup by detection_id.
+    \item Lookup by detection\_id.
     \item Mock demo.
 \end{enumerate}
+\normalsize
 
 \section{Kiểm thử tích hợp}
 
@@ -218,4 +227,5 @@ Thời gian khởi động & khoảng 5 giây & FastAPI + lazy-load model \\
 \section{Kết luận chương}
 
 Chương này đã trình bày các chức năng hoàn thành, phân tích chi tiết module \texttt{\detokenize{vision.py}} và \texttt{\detokenize{main.py}}, smoke test, Postman collection, Docker hóa và đánh giá hiệu năng YOLO. Kết quả cho thấy service chạy ổn định, có fallback hợp lý và đủ minh chứng để trình bày trước hội đồng.
+
 

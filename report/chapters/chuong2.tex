@@ -192,17 +192,23 @@ Hàm này chuyển đổi \texttt{\detokenize{DetectionResult}} thành \texttt{\
 \centering
 \caption{Logic chuyển đổi DetectionResult $\rightarrow$ CoreCameraEvent}
 \label{tab:decision-table}
-\begin{tabular}{|p{4.5cm}|p{2.5cm}|p{3.5cm}|p{4cm}|}
+\small
+\begin{tabular}{|p{4.2cm}|p{2.1cm}|p{3.1cm}|p{3.9cm}|}
 \hline
-\textbf{Điều kiện} & \textbf{risk\_level} & \textbf{core\_decision} & \textbf{reason} \\
+\textbf{�i?u ki?n} & \textbf{risk\_level} & \textbf{core\_decision} & \textbf{reason} \\
 \hline
-Không phát hiện gì & normal & no\_alert & no\_anomaly\_detected \\
+Kh�ng ph�t hi?n g� & normal & no\_alert & no\_anomaly\_detected \\
 \hline
-Phát hiện người, conf $\geq$ 0.6 & warning & alert\_required & unknown\_person\_detected \\
+Ph�t hi?n ngu?i, conf $\geq$ 0.6 & warning & alert\_required & unknown\_person\_detected \\
 \hline
-Phát hiện đối tượng, conf $< 0.85$ & warning & alert\_required & object\_detected \\
+Ph�t hi?n d?i tu?ng, conf $< 0.85$ & warning & alert\_required & object\_detected \\
 \hline
-Phát hiện đối tượng, conf $\geq 0.85$ & critical & alert\_required & object\_detected\_high\_conf \\
+Ph�t hi?n d?i tu?ng, conf $\geq 0.85$ & critical & alert\_required & object\_detected\_high\_conf \\
+\hline
+\end{tabular}
+\normalsize
+\Nguon{Nh�m th?c hi?n}
+\end{table}
 \hline
 \end{tabular}
 \Nguon{Nhóm thực hiện}
