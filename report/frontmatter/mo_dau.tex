@@ -2,7 +2,7 @@
 
 Trong bối cảnh chuyển đổi số trong giáo dục, việc xử lý tự động dữ liệu từ camera ngày càng cần thiết. Nhóm chúng em thực hiện đề tài ``Xây dựng AI Vision Service cho hệ thống Smart Campus'' để tạo một dịch vụ nhận ảnh, phân tích bằng AI và trả kết quả chuẩn hóa cho các dịch vụ khác trong nền tảng.
 
-AI Vision Service đóng vai trò trung gian giữa Camera Stream và các dịch vụ nghiệp vụ phía sau. Dịch vụ nhận \texttt{frame\_url}, chạy YOLOv8n hoặc chế độ mock dự phòng, rồi xuất kết quả theo JSON thống nhất. Cách làm này giúp hệ thống dễ tích hợp, dễ kiểm thử và vẫn hoạt động ổn định khi mô hình thật chưa sẵn sàng.
+AI Vision Service đóng vai trò trung gian giữa Camera Stream và các dịch vụ nghiệp vụ phía sau. Dịch vụ nhận \Code{frame_url}, chạy YOLOv8n hoặc chế độ mock dự phòng, rồi xuất kết quả theo JSON thống nhất. Cách làm này giúp hệ thống dễ tích hợp, dễ kiểm thử và vẫn hoạt động ổn định khi mô hình thật chưa sẵn sàng.
 
 Trong quá trình làm đề tài, nhóm đã hoàn thiện API, tài liệu đặc tả, Postman collection, smoke test và cấu trúc triển khai bằng Docker. Báo cáo này trình bày ngắn gọn bài toán, kiến trúc, API chính, cơ chế fallback và kết quả kiểm thử thực tế.
 
@@ -18,7 +18,8 @@ Trong quá trình làm đề tài, nhóm đã hoàn thiện API, tài liệu đ�
 \centering
 \caption{Danh sách thành viên nhóm thực hiện}
 \label{tab:members}
-\begin{tabular}{|c|p{5.5cm}|p{4cm}|}
+\small
+\begin{tabular}{|>{\centering\arraybackslash}p{1.4cm}|>{\raggedright\arraybackslash}p{6.2cm}|>{\centering\arraybackslash}p{4cm}|}
 \hline
 \textbf{STT} & \textbf{Họ và tên} & \textbf{Mã sinh viên} \\
 \hline
@@ -29,6 +30,7 @@ Trong quá trình làm đề tài, nhóm đã hoàn thiện API, tài liệu đ�
 3 & Lê Quang Dũng & 1771020177 \\
 \hline
 \end{tabular}
+\normalsize
 \Nguon{Nhóm thực hiện}
 \end{table}
 

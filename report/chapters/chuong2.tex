@@ -1,116 +1,107 @@
-﻿\chapter{THIáº¾T Káº¾ Há»† THá»NG VÃ€ API CONTRACT}
+\chapter{THIẾT KẾ HỆ THỐNG VÀ API CONTRACT}
 
-\section{Kiáº¿n trÃºc tá»•ng quan}
+\section{Kiến trúc tổng quan}
 
-AI Vision Service Ä‘Æ°á»£c thiáº¿t káº¿ theo mÃ´ hÃ¬nh layered architecture vá»›i 4 táº§ng chÃ­nh. Thiáº¿t káº¿ nÃ y tuÃ¢n thá»§ nguyÃªn lÃ½ Separation of Concerns: má»—i thÃ nh pháº§n chá»‰ lo má»™t viá»‡c, giÃºp code dá»… Ä‘á»c, dá»… test vÃ  dá»… báº£o trÃ¬.
+AI Vision Service được thiết kế theo mô hình layered architecture với 4 tầng chính. Cách chia này giúp mỗi thành phần chỉ đảm nhiệm một nhóm trách nhiệm rõ ràng, từ đó code dễ đọc, dễ kiểm thử và dễ bảo trì.
 
 \begin{table}[H]
 \centering
-\caption{Kiáº¿n trÃºc phÃ¢n táº§ng cá»§a AI Vision Service}
+\caption{Kiến trúc phân tầng của AI Vision Service}
 \label{tab:layered-arch}
 \small
-\begin{tabular}{|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{9cm}|}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{3.8cm}|>{\raggedright\arraybackslash}p{9.4cm}|}
 \hline
-\textbf{Táº§ng} & \textbf{MÃ´ táº£} \\
+\textbf{Tầng} & \textbf{Mô tả} \\
 \hline
-Táº§ng API (Presentation Layer) & FastAPI Router trong \texttt{\detokenize{main.py}}, tiáº¿p nháº­n request vÃ  tráº£ response. \\
+API & FastAPI router trong \Code{main.py}, tiếp nhận request và trả response. \\
 \hline
-Táº§ng Nghiá»‡p vá»¥ (Business Logic Layer) & Detection engine trong \texttt{\detokenize{vision.py}} cÃ¹ng cÃ¡c Pydantic model. \\
+Nghiệp vụ & Detection engine trong \Code{vision.py}, Pydantic model và logic phân tích ảnh. \\
 \hline
-Táº§ng TÃ­ch há»£p (Integration Layer) & HTTP client \texttt{\detokenize{httpx}} vÃ  adapter tá»« A4 sang A6. \\
+Tích hợp & HTTP client, adapter từ A4 sang A6 và hợp đồng dữ liệu với các service khác. \\
 \hline
-Táº§ng Háº¡ táº§ng (Infrastructure Layer) & In-memory store, Docker container, Uvicorn server. \\
+Hạ tầng & In-memory store, Docker container và Uvicorn server. \\
 \hline
 \end{tabular}
-\Nguon{NhÃ³m thá»±c hiá»‡n}
+\normalsize
+\Nguon{Nhóm thực hiện}
 \end{table}
 
-\section{Luá»“ng xá»­ lÃ½ chi tiáº¿t}
+\section{Luồng xử lý chi tiết}
 
 \begin{sodo}[H]
     \centering
     \small
     \fbox{\parbox[c][4.8cm][c]{0.74\textwidth}{\centering
     A2 Camera Stream $\rightarrow$ FastAPI Router\\[2pt]
-    $\rightarrow$ HTTPClient $\rightarrow$ YOLO Engine\\[2pt]
+    $\rightarrow$ HTTP Client $\rightarrow$ YOLO Engine\\[2pt]
     $\rightarrow$ Detection Store $\rightarrow$ DetectionResult}}
-    \SodoCaption{Sequence diagram - luá»“ng xá»­ lÃ½ má»™t detection request}{NhÃ³m thá»±c hiá»‡n}
+    \SodoCaption{Sequence diagram - luồng xử lý một detection request}{Nhóm thực hiện}
     \label{fig:sequence}
 \end{sodo}
 
-\subsection{Diá»…n giáº£i tá»«ng bÆ°á»›c}
+\subsection{Diễn giải từng bước}
 
 \begin{enumerate}
-    \item Camera Stream gá»i \texttt{\detokenize{POST /api/v1/vision/detect}} vá»›i JSON chá»©a \texttt{\detokenize{camera_id}}, \texttt{\detokenize{frame_url}}, \texttt{\detokenize{timestamp}}.
-    \item FastAPI validate request body qua \texttt{\detokenize{VisionDetectRequest}}. Náº¿u thiáº¿u trÆ°á»ng hoáº·c sai kiá»ƒu, tráº£ vá» 422 ngay láº­p tá»©c.
-    \item \texttt{\detokenize{_fetch_image_bytes()}} sá»­ dá»¥ng \texttt{\detokenize{httpx.AsyncClient}} Ä‘á»ƒ táº£i áº£nh tá»« \texttt{\detokenize{frame_url}} vá»›i timeout 15 giÃ¢y.
-    \item áº¢nh Ä‘Æ°á»£c nháº­n vá» dÆ°á»›i dáº¡ng bytes vÃ  log kÃ­ch thÆ°á»›c Ä‘á»ƒ debug.
-    \item \texttt{\detokenize{analyze_image()}} quyáº¿t Ä‘á»‹nh dÃ¹ng YOLO hay mock. Náº¿u YOLO, áº£nh Ä‘Æ°á»£c giáº£i mÃ£ báº±ng OpenCV rá»“i Ä‘Æ°a vÃ o \texttt{\detokenize{model.predict()}}.
-    \item \texttt{\detokenize{DetectionResult}} Ä‘Æ°á»£c lÆ°u vÃ o \texttt{\detokenize{DETECTION_STORE}} vá»›i key \texttt{\detokenize{detection_id}}.
-    \item Káº¿t quáº£ Ä‘Æ°á»£c serialize thÃ nh JSON vÃ  tráº£ vá».
-    \item Camera Stream nháº­n \texttt{\detokenize{HTTP 200 OK}} kÃ¨m JSON body.
+    \item Camera Stream gọi endpoint \Code{POST /api/v1/vision/detect} với JSON gồm \Code{camera_id}, \Code{frame_url} và \Code{timestamp}.
+    \item FastAPI validate request body qua schema \Code{VisionDetectRequest}. Nếu thiếu trường hoặc sai kiểu, service trả về lỗi 422.
+    \item Hàm \Code{_fetch_image_bytes()} dùng HTTP client để tải ảnh từ \Code{frame_url} với timeout 15 giây.
+    \item Ảnh được nhận dưới dạng bytes, sau đó được giải mã bằng OpenCV.
+    \item Hàm \Code{analyze_image()} quyết định chạy YOLO hoặc fallback sang mock AI.
+    \item Kết quả \Code{DetectionResult} được lưu vào \Code{DETECTION_STORE} bằng khóa \Code{detection_id}.
+    \item Kết quả được serialize thành JSON và trả về cho Camera Stream.
 \end{enumerate}
 
-\section{Thiáº¿t káº¿ Data Models}
+\section{Thiết kế Data Models}
 
-\subsection{VisionDetectRequest - schema Ä‘áº§u vÃ o}
+\subsection{VisionDetectRequest - schema đầu vào}
 
-CÃ¡c Ä‘iá»ƒm Ä‘Ã¡ng chÃº Ã½:
+Request đầu vào gồm ba trường chính: mã camera, URL ảnh và thời điểm ghi nhận frame. Trường \Code{frame_url} hỗ trợ thêm alias \Code{image_url} để tương thích với endpoint cũ.
 
-\begin{itemize}
-    \item \texttt{\detokenize{frame_url}} cháº¥p nháº­n cáº£ key \texttt{\detokenize{frame_url}} vÃ  \texttt{\detokenize{image_url}} Ä‘á»ƒ giá»¯ backward compatibility.
-    \item \texttt{\detokenize{HttpUrl}} tá»± Ä‘á»™ng validate URL há»£p lá»‡.
-    \item \texttt{\detokenize{datetime}} tá»± Ä‘á»™ng parse ISO8601 timestamp.
-\end{itemize}
+\subsection{DetectionResult - schema đầu ra chính}
 
-\subsection{DetectionResult - schema Ä‘áº§u ra chÃ­nh}
+Kết quả trả về gồm mã detection, mã camera, URL ảnh, timestamp, trạng thái phát hiện bất thường, độ tin cậy, thông tin đối tượng và chế độ model. Trường \Code{finding} có thể rỗng nếu ảnh không có đối tượng đáng chú ý.
 
-\begin{itemize}
-    \item \texttt{\detokenize{confidence_score}} chá»‰ cÃ³ giÃ¡ trá»‹ khi \texttt{\detokenize{anomaly_detected = true}}.
-    \item \texttt{\detokenize{finding}} lÃ  \texttt{\detokenize{Optional[Finding]}}, náº¿u khÃ´ng cÃ³ Ä‘á»‘i tÆ°á»£ng phÃ¡t hiá»‡n thÃ¬ lÃ  \texttt{\detokenize{null}}.
-    \item \texttt{\detokenize{model_mode}} cho consumer biáº¿t káº¿t quáº£ Ä‘áº¿n tá»« YOLO tháº­t hay mock.
-\end{itemize}
+\subsection{Discriminated Union - PersonFinding và ObjectFinding}
 
-\subsection{Discriminated Union - PersonFinding vÃ  ObjectFinding}
-
-Pydantic Discriminated Union cho phÃ©p tá»± Ä‘á»™ng chá»n schema dá»±a trÃªn giÃ¡ trá»‹ cá»§a \texttt{\detokenize{finding_type}}. Náº¿u \texttt{\detokenize{finding_type = "person"}} thÃ¬ parse thÃ nh \texttt{\detokenize{PersonFinding}}, cÃ²n \texttt{\detokenize{finding_type = "object"}} thÃ¬ parse thÃ nh \texttt{\detokenize{ObjectFinding}}.
+Pydantic Discriminated Union cho phép service tự động chọn schema dựa trên \Code{finding_type}. Nếu giá trị là \Code{person}, dữ liệu được parse thành \Code{PersonFinding}; nếu giá trị là \Code{object}, dữ liệu được parse thành \Code{ObjectFinding}.
 
 \subsection{CoreCameraEvent - adapter cho Core Business}
 
-Adapter nÃ y chuyá»ƒn Ä‘á»•i tá»« ngÃ´n ngá»¯ AI sang ngÃ´n ngá»¯ nghiá»‡p vá»¥. ÄÃ¢y lÃ  má»™t vÃ­ dá»¥ Ä‘iá»ƒn hÃ¬nh cá»§a Adapter Pattern.
+Adapter chuyển đổi ngôn ngữ dữ liệu của AI Vision sang ngôn ngữ nghiệp vụ của Core Business. Đây là ví dụ điển hình của Adapter Pattern trong hệ thống microservices.
 
 \begin{table}[H]
 \centering
-\caption{Mapping giá»¯a AI Vision vÃ  Core Business}
+\caption{Mapping giữa AI Vision và Core Business}
 \label{tab:mapping-core}
 \small
-\begin{tabular}{|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{6cm}|}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{3.6cm}|>{\raggedright\arraybackslash}p{3.6cm}|>{\raggedright\arraybackslash}p{6.1cm}|}
 \hline
-\textbf{AI Vision} & \textbf{Core Business} & \textbf{Ghi chÃº} \\
+\textbf{AI Vision} & \textbf{Core Business} & \textbf{Ghi chú} \\
 \hline
-detection_id & event_id & Giá»¯ nguyÃªn \\
+detection\_id & event\_id & Giữ nguyên mã định danh. \\
 \hline
-anomaly_detected & motion_detected & Boolean tÆ°Æ¡ng Ä‘Æ°Æ¡ng \\
+anomaly\_detected & motion\_detected & Hai trường boolean có ý nghĩa tương đương. \\
 \hline
-confidence_score & motion_score & Float tá»« 0 Ä‘áº¿n 1 \\
+confidence\_score & motion\_score & Chuẩn hóa điểm tin cậy trong khoảng 0-1. \\
 \hline
-finding(person, conf >= 0.6) & unknown_person = true & PhÃ¡t hiá»‡n ngÆ°á»i láº¡ \\
+person, conf $\geq$ 0.6 & unknown\_person & Đánh dấu có người lạ cần cảnh báo. \\
 \hline
-risk_level & risk_level & Map 3 má»©c sang 3 má»©c \\
+risk\_level & risk\_level & Map mức rủi ro sang hệ nghiệp vụ. \\
 \hline
 \end{tabular}
-\Nguon{NhÃ³m thá»±c hiá»‡n}
+\normalsize
+\Nguon{Nhóm thực hiện}
 \end{table}
 
-\subsection{ProblemDetails - RFC 9457 error model}
+\subsection{ProblemDetails - error model}
 
-Service tuÃ¢n thá»§ chuáº©n Problem Details cho HTTP APIs. Thay vÃ¬ tráº£ vá» lá»—i khÃ´ng cáº¥u trÃºc, má»i lá»—i Ä‘á»u Ä‘Æ°á»£c format thÃ nh \texttt{\detokenize{ProblemDetails}} Ä‘á»ƒ consumer parse nháº¥t quÃ¡n.
+Service chuẩn hóa lỗi theo cấu trúc \Code{ProblemDetails}. Nhờ vậy, consumer có thể đọc lỗi một cách nhất quán thay vì phải xử lý nhiều định dạng phản hồi khác nhau.
 
-\section{API Endpoints chi tiáº¿t}
+\section{API Endpoints chi tiết}
 
 \subsection{GET / - Dashboard}
 
-Tráº£ vá» HTML dashboard vá»›i dark theme, hiá»ƒn thá»‹ tÃªn service, tráº¡ng thÃ¡i model, form test nhanh vÃ  danh sÃ¡ch endpoint.
+Endpoint này trả về dashboard HTML đơn giản để kiểm tra trạng thái service, model và các endpoint demo.
 
 \subsection{GET /health}
 
@@ -119,23 +110,24 @@ Tráº£ vá» HTML dashboard vá»›i dark theme, hiá»ƒn thá»‹ tÃªn
 \caption{GET /health - response}
 \label{tab:health}
 \small
-\begin{tabular}{|>{\raggedright\arraybackslash}p{2cm}|>{\raggedright\arraybackslash}p{5cm}|>{\raggedright\arraybackslash}p{6cm}|}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{2.1cm}|>{\raggedright\arraybackslash}p{5.0cm}|>{\raggedright\arraybackslash}p{6.0cm}|}
 \hline
-\textbf{Status} & \textbf{Response} & \textbf{Ã nghÄ©a} \\
+\textbf{Status} & \textbf{Response} & \textbf{Ý nghĩa} \\
 \hline
-200 OK & \texttt{\detokenize{{"status":"ok","service":"ai-vision-service"}}} & Service hoáº¡t Ä‘á»™ng bÃ¬nh thÆ°á»ng \\
+200 OK & status = ok, service = ai-vision-service & Service đang hoạt động bình thường. \\
 \hline
 \end{tabular}
-\Nguon{NhÃ³m thá»±c hiá»‡n}
+\normalsize
+\Nguon{Nhóm thực hiện}
 \end{table}
 
 \subsection{GET /model}
 
-Tráº£ vá» tráº¡ng thÃ¡i cá»§a YOLO model. \texttt{\detokenize{mode}} cÃ³ thá»ƒ lÃ  \texttt{\detokenize{yolo}} hoáº·c \texttt{\detokenize{mock-ai}}.
+Endpoint này trả về trạng thái của model. Trường \Code{mode} cho biết service đang chạy YOLO thật hay chế độ \Code{mock-ai}.
 
 \subsection{POST /api/v1/vision/detect}
 
-ÄÃ¢y lÃ  endpoint quan trá»ng nháº¥t, Ä‘Æ°á»£c Camera Stream gá»i khi phÃ¡t hiá»‡n chuyá»ƒn Ä‘á»™ng. Request gá»“m \texttt{\detokenize{camera_id}}, \texttt{\detokenize{frame_url}}, \texttt{\detokenize{timestamp}}; response tráº£ vá» \texttt{\detokenize{DetectionResult}}.
+Đây là endpoint quan trọng nhất, được Camera Stream gọi khi phát hiện chuyển động. Request gồm \Code{camera_id}, \Code{frame_url}, \Code{timestamp}; response trả về \Code{DetectionResult}.
 
 \begin{verbatim}
 {
@@ -149,97 +141,84 @@ Tráº£ vá» tráº¡ng thÃ¡i cá»§a YOLO model. \texttt{\detokenize{mod
 {
   "detection_id": "det-a1b2c3d4e5f6",
   "camera_id": "cam-gate-01",
-  "frame_url": "https://ultralytics.com/images/bus.jpg",
-  "timestamp": "2026-05-02T09:10:00Z",
   "anomaly_detected": true,
   "confidence_score": 0.87,
-  "finding": {
-    "finding_type": "object",
-    "object_name": "bus",
-    "risk_level": "medium",
-    "description": "Detected object: bus"
-  },
-  "model_mode": "yolo",
-  "notes": "YOLO model: yolov8n.pt"
+  "model_mode": "yolo"
 }
 \end{verbatim}
 
-\subsection{GET /api/v1/vision/detections/{detection_id}}
+\subsection{GET /api/v1/vision/detections/\{detection\_id\}}
 
-Tra cá»©u káº¿t quáº£ Ä‘Ã£ lÆ°u. Tráº£ vá» 404 náº¿u \texttt{\detokenize{detection_id}} khÃ´ng tá»“n táº¡i.
+Endpoint này tra cứu kết quả đã lưu. Nếu không tìm thấy \Code{detection_id}, service trả về lỗi 404.
 
 \subsection{POST /api/v1/events/camera}
 
-Adapter endpoint: nháº­n \texttt{\detokenize{VisionDetectRequest}}, cháº¡y detection, rá»“i chuyá»ƒn Ä‘á»•i thÃ nh \texttt{\detokenize{CoreCameraEvent}}. Endpoint nÃ y dÃ nh cho Core Business náº¿u cáº§n.
+Endpoint adapter nhận \Code{VisionDetectRequest}, chạy detection, sau đó chuyển đổi kết quả thành \Code{CoreCameraEvent}. Endpoint này dành cho Core Business khi cần nhận event đã chuẩn hóa.
 
-\subsection{POST /analyze vÃ  POST /analyze/mock}
+\subsection{POST /analyze và POST /analyze/mock}
 
-Hai endpoint legacy Ä‘á»ƒ backward compatibility:
+Hai endpoint legacy được giữ lại để tương thích ngược. \Code{/analyze} nhận input kiểu cũ, còn \Code{/analyze/mock} luôn trả về kết quả mock để demo nhanh.
 
-\begin{itemize}
-    \item \texttt{\detokenize{/analyze}}: nháº­n \texttt{\detokenize{CameraFrameIn}} dÃ¹ng \texttt{\detokenize{image_url}}.
-    \item \texttt{\detokenize{/analyze/mock}}: luÃ´n tráº£ vá» káº¿t quáº£ mock, khÃ´ng cáº§n táº£i áº£nh tháº­t.
-\end{itemize}
+\section{Mã nguồn tiêu biểu và giải thích}
 
-\section{MÃ£ nguá»“n tiÃªu biá»ƒu vÃ  giáº£i thÃ­ch}
+\subsection{Luồng xử lý chính - run detection}
 
-\subsection{Luá»“ng xá»­ lÃ½ chÃ­nh - \texttt{\detokenize{_run_detection()}}}
+Hàm \Code{_run_detection()} là orchestrator chính. Hàm này normalize input, tải ảnh, chạy AI inference, build response và lưu kết quả vào bộ nhớ tạm.
 
-HÃ m \texttt{\detokenize{_run_detection}} lÃ  orchestrator chÃ­nh. NÃ³ normalize input, táº£i áº£nh, cháº¡y AI inference, build response vÃ  lÆ°u káº¿t quáº£ vÃ o bá»™ nhá»› táº¡m. CÃ¡ch tá»• chá»©c nÃ y bÃ¡m khÃ¡ sÃ¡t Single Responsibility Principle, vÃ¬ má»—i helper chá»‰ lÃ m má»™t viá»‡c.
+\subsection{Adapter - map to core camera event}
 
-\subsection{Adapter - \texttt{\detokenize{_map_to_core_camera_event()}}}
-
-HÃ m nÃ y chuyá»ƒn Ä‘á»•i \texttt{\detokenize{DetectionResult}} thÃ nh \texttt{\detokenize{CoreCameraEvent}}. Logic quyáº¿t Ä‘á»‹nh dá»±a trÃªn \texttt{\detokenize{anomaly_detected}}, \texttt{\detokenize{confidence_score}}, loáº¡i Ä‘á»‘i tÆ°á»£ng vÃ  ngÆ°á»¡ng confidence. Náº¿u phÃ¡t hiá»‡n ngÆ°á»i vá»›i confidence Ä‘á»§ cao thÃ¬ \texttt{\detokenize{unknown_person = true}}; náº¿u khÃ´ng cÃ³ anomaly thÃ¬ \texttt{\detokenize{core_decision = no_alert}}.
+Hàm này chuyển \Code{DetectionResult} thành \Code{CoreCameraEvent}. Logic quyết định dựa trên trạng thái phát hiện bất thường, điểm tin cậy, loại đối tượng và ngưỡng confidence.
 
 \begin{table}[H]
 \centering
 \caption{Logic chuyển đổi DetectionResult $\rightarrow$ CoreCameraEvent}
 \label{tab:decision-table}
 \small
-\begin{tabular}{|>{\raggedright\arraybackslash}p{4.2cm}|>{\raggedright\arraybackslash}p{2.1cm}|>{\raggedright\arraybackslash}p{3.1cm}|>{\raggedright\arraybackslash}p{3.9cm}|}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{4.1cm}|>{\raggedright\arraybackslash}p{2.1cm}|>{\raggedright\arraybackslash}p{3.0cm}|>{\raggedright\arraybackslash}p{4.0cm}|}
 \hline
 \textbf{Điều kiện} & \textbf{risk\_level} & \textbf{core\_decision} & \textbf{reason} \\
 \hline
-Không phát hiện gì & normal & no\_alert & no\_anomaly\_detected \\
+Không phát hiện gì & normal & no\_alert & no\_anomaly \\
 \hline
-Phát hiện người, conf $\geq$ 0.6 & warning & alert\_required & unknown\_person\_detected \\
+Phát hiện người, conf $\geq$ 0.6 & warning & alert\_required & unknown\_person \\
 \hline
 Phát hiện đối tượng, conf $< 0.85$ & warning & alert\_required & object\_detected \\
 \hline
-Phát hiện đối tượng, conf $\geq 0.85$ & critical & alert\_required & object\_detected\_high\_conf \\
+Phát hiện đối tượng, conf $\geq$ 0.85 & critical & alert\_required & object\_high\_conf \\
 \hline
 \end{tabular}
 \normalsize
 \Nguon{Nhóm thực hiện}
 \end{table}
+
+\begin{table}[H]
 \centering
-\caption{Cáº¥u trÃºc thÆ° má»¥c dá»± Ã¡n AI Vision Service}
+\caption{Cấu trúc thư mục dự án AI Vision Service}
 \label{tab:repo-structure}
 \small
-\begin{tabular}{|>{\raggedright\arraybackslash}p{5cm}|>{\raggedright\arraybackslash}p{8cm}|}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{4.5cm}|>{\raggedright\arraybackslash}p{8.5cm}|}
 \hline
-\textbf{ThÆ° má»¥c / file} & \textbf{Chá»©c nÄƒng} \\
+\textbf{Thư mục / file} & \textbf{Chức năng} \\
 \hline
-\texttt{\detokenize{app/main.py}} & FastAPI application vÃ  API endpoints. \\
+\Code{app/main.py} & FastAPI application và API endpoints. \\
 \hline
-\texttt{\detokenize{app/vision.py}} & YOLOv8n inference engine vÃ  mock AI. \\
+\Code{app/vision.py} & YOLOv8n inference engine và mock AI. \\
 \hline
-\texttt{\detokenize{openapi.yaml}} & Äáº·c táº£ OpenAPI 3.1.0. \\
+\Code{openapi.yaml} & Đặc tả OpenAPI 3.1.0. \\
 \hline
-\texttt{\detokenize{Dockerfile}} & Äá»‹nh nghÄ©a Docker image. \\
+\Code{Dockerfile} & Định nghĩa Docker image. \\
 \hline
-\texttt{\detokenize{docker-compose.yml}} & Cáº¥u hÃ¬nh Docker Compose. \\
+\Code{docker-compose.yml} & Cấu hình Docker Compose. \\
 \hline
-\texttt{\detokenize{test_api.py}} & Smoke test tá»± Ä‘á»™ng. \\
+\Code{test_api.py} & Smoke test tự động. \\
 \hline
-\texttt{\detokenize{postman/}} & Collection vÃ  environment Ä‘á»ƒ kiá»ƒm thá»­ API. \\
+\Code{postman/} & Collection và environment để kiểm thử API. \\
 \hline
 \end{tabular}
-\Nguon{NhÃ³m thá»±c hiá»‡n}
+\normalsize
+\Nguon{Nhóm thực hiện}
 \end{table}
 
-\section{Káº¿t luáº­n chÆ°Æ¡ng}
+\section{Kết luận chương}
 
-ChÆ°Æ¡ng nÃ y Ä‘Ã£ trÃ¬nh bÃ y kiáº¿n trÃºc phÃ¢n táº§ng, sequence xá»­ lÃ½ detection request, thiáº¿t káº¿ data models, endpoint chi tiáº¿t, Ä‘oáº¡n mÃ£ tiÃªu biá»ƒu vÃ  cáº¥u trÃºc repository. ÄÃ¢y lÃ  ná»n táº£ng Ä‘á»ƒ sang chÆ°Æ¡ng 3, nÆ¡i nhÃ³m mÃ´ táº£ viá»‡c cÃ i Ä‘áº·t, kiá»ƒm thá»­ vÃ  Ä‘Ã³ng gÃ³i Docker.
-
-
+Chương này đã trình bày kiến trúc phân tầng, luồng xử lý detection request, thiết kế data models, các endpoint chính, adapter sang Core Business và cấu trúc repository. Đây là nền tảng cho chương 3, nơi nhóm mô tả cài đặt, kiểm thử và đóng gói Docker.

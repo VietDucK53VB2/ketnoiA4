@@ -47,6 +47,8 @@
 \usepackage{caption}
 \usepackage{amsmath, amssymb}
 \usepackage{enumitem}
+\usepackage{xurl}
+\usepackage{seqsplit}
 \setlist[itemize]{
     label=-,
     leftmargin=1.27cm,
@@ -65,6 +67,10 @@
     citecolor=black,
     urlcolor=blue
 }
+\Urlmuskip=0mu plus 2mu
+\emergencystretch=2em
+\newcommand{\Code}[1]{\path{#1}}
+\sloppy
 
 \setlength{\headheight}{14pt}
 \setlength{\headsep}{10pt}

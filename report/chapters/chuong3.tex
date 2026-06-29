@@ -13,27 +13,27 @@ AI Vision Service đã được cài đặt đầy đủ 11 chức năng theo y�
 \hline
 \textbf{Chức năng} & \textbf{Trạng thái} & \textbf{Minh chứng} \\
 \hline
-REST API endpoints (7) & Hoàn thành & \texttt{\detokenize{openapi.yaml}}, Postman \\
+REST API endpoints (7) & Hoàn thành & \Code{openapi.yaml}, Postman \\
 \hline
-Tải ảnh từ URL & Hoàn thành & \texttt{\detokenize{httpx}} trong \texttt{\detokenize{main.py}} \\
+Tải ảnh từ URL & Hoàn thành & \Code{httpx} trong \Code{main.py} \\
 \hline
-YOLOv8n inference & Hoàn thành & \texttt{\detokenize{vision.py}}, \texttt{\detokenize{_run_yolo()}} \\
+YOLOv8n inference & Hoàn thành & \Code{vision.py}, \Code{_run_yolo()} \\
 \hline
-Fallback mock AI & Hoàn thành & \texttt{\detokenize{vision.py}}, \texttt{\detokenize{_mock_result()}} \\
+Fallback mock AI & Hoàn thành & \Code{vision.py}, \Code{_mock_result()} \\
 \hline
-Phân loại \texttt{\detokenize{risk_level}} & Hoàn thành & \texttt{\detokenize{_risk_from_confidence()}} \\
+Phân loại \Code{risk_level} & Hoàn thành & \Code{_risk_from_confidence()} \\
 \hline
-Lưu kết quả tạm thời & Hoàn thành & \texttt{\detokenize{DETECTION_STORE}} dict \\
+Lưu kết quả tạm thời & Hoàn thành & \Code{DETECTION_STORE} dict \\
 \hline
-Adapter cho Core Business & Hoàn thành & \texttt{\detokenize{_map_to_core_camera_event()}} \\
+Adapter cho Core Business & Hoàn thành & \Code{_map_to_core_camera_event()} \\
 \hline
-Dashboard HTML & Hoàn thành & \texttt{\detokenize{GET /}} \\
+Dashboard HTML & Hoàn thành & \Code{GET /} \\
 \hline
-OpenAPI 3.1.0 & Hoàn thành & \texttt{\detokenize{openapi.yaml}}, Swagger UI \\
+OpenAPI 3.1.0 & Hoàn thành & \Code{openapi.yaml}, Swagger UI \\
 \hline
-Docker + Compose & Hoàn thành & \texttt{\detokenize{Dockerfile}}, \texttt{\detokenize{docker-compose.yml}} \\
+Docker + Compose & Hoàn thành & \Code{Dockerfile}, \Code{docker-compose.yml} \\
 \hline
-Postman + Smoke test & Hoàn thành & \texttt{\detokenize{test_api.py}}, Postman collection \\
+Postman + Smoke test & Hoàn thành & \Code{test_api.py}, Postman collection \\
 \hline
 \end{tabular}
 \normalsize
@@ -47,25 +47,25 @@ Postman + Smoke test & Hoàn thành & \texttt{\detokenize{test_api.py}}, Postman
 Module này chịu trách nhiệm toàn bộ logic AI. Nó có các thành phần chính:
 
 \begin{itemize}
-    \item Fallback Mock AI: \texttt{\detokenize{_mock_result()}}.
-    \item Lazy-load model: \texttt{\detokenize{_load_model()}}.
-    \item YOLO inference: \texttt{\detokenize{_run_yolo()}}.
-    \item Entry point: \texttt{\detokenize{analyze_image()}}.
+    \item Fallback Mock AI: \Code{_mock_result()}.
+    \item Lazy-load model: \Code{_load_model()}.
+    \item YOLO inference: \Code{_run_yolo()}.
+    \item Entry point: \Code{analyze_image()}.
 \end{itemize}
 
 \subsection{app/main.py - API Server}
 
-\texttt{\detokenize{main.py}} là "mặt tiền" của service. Mã nguồn gồm:
+\Code{main.py} là "mặt tiền" của service. Mã nguồn gồm:
 
 \small
 \begin{itemize}
     \item Pydantic models:
-    \newline \texttt{\detokenize{VisionDetectRequest}}, \texttt{\detokenize{DetectionResult}}
-    \newline \texttt{\detokenize{CoreCameraEvent}}, \texttt{\detokenize{ProblemDetails}}.
+    \newline \Code{VisionDetectRequest}, \Code{DetectionResult}
+    \newline \Code{CoreCameraEvent}, \Code{ProblemDetails}.
     \item Helper functions:
-    \newline \texttt{\detokenize{_problem}}, \texttt{\detokenize{_fetch_image_bytes}}
-    \newline \texttt{\detokenize{_build_finding}}, \texttt{\detokenize{_store_detection}}
-    \newline \texttt{\detokenize{_map_to_core_camera_event}}, \texttt{\detokenize{_run_detection}}.
+    \newline \Code{_problem}, \Code{_fetch_image_bytes}
+    \newline \Code{_build_finding}, \Code{_store_detection}
+    \newline \Code{_map_to_core_camera_event}, \Code{_run_detection}.
     \item Dashboard HTML template.
     \item Route handlers cho 7 endpoint.
 \end{itemize}
@@ -91,24 +91,24 @@ Script smoke test tự động kiểm tra:
 \centering
 \caption{Postman Test Cases}
 \label{tab:postman-tests}
-\small
-\begin{tabular}{|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{5cm}|>{\raggedright\arraybackslash}p{2cm}|>{\raggedright\arraybackslash}p{4cm}|}
+\scriptsize
+\begin{tabular}{|>{\raggedright\arraybackslash}p{3.7cm}|>{\raggedright\arraybackslash}p{4.7cm}|>{\raggedright\arraybackslash}p{1.6cm}|>{\raggedright\arraybackslash}p{3.9cm}|}
 \hline
 \textbf{Test Case} & \textbf{Endpoint} & \textbf{Method} & \textbf{Kỳ vọng} \\
 \hline
-HealthCheck & \texttt{\detokenize{/health}} & GET & 200, status = ok \\
+HealthCheck & \Code{/health} & GET & 200, status = ok \\
 \hline
-ModelStatus & \texttt{\detokenize{/model}} & GET & 200, mode = yolo|mock-ai \\
+ModelStatus & \Code{/model} & GET & 200, mode = yolo|mock-ai \\
 \hline
-Detection - Happy Path & \texttt{\detokenize{/api/v1/vision/detect}} & POST & 200, có \texttt{\detokenize{detection_id}} \\
+Detection - Happy Path & \Code{/api/v1/vision/detect} & POST & 200, có \Code{detection_id} \\
 \hline
-Detection - Invalid URL & \texttt{\detokenize{/api/v1/vision/detect}} & POST & 422, ProblemDetails \\
+Detection - Invalid URL & \Code{/api/v1/vision/detect} & POST & 422, ProblemDetails \\
 \hline
-Detection - Missing Field & \texttt{\detokenize{/api/v1/vision/detect}} & POST & 422, validation error \\
+Detection - Missing Field & \Code{/api/v1/vision/detect} & POST & 422, validation error \\
 \hline
-Tra cứu kết quả & \texttt{\detokenize{/api/v1/vision/detections/{id}}} & GET & 200, đúng \texttt{\detokenize{detection_id}} \\
+Tra cứu kết quả & \Code{/api/v1/vision/detections/{id}} & GET & 200, đúng \Code{detection_id} \\
 \hline
-MockDemo & \texttt{\detokenize{/analyze/mock}} & POST & 200, \texttt{\detokenize{model_mode=mock-ai}} \\
+MockDemo & \Code{/analyze/mock} & POST & 200, \Code{model_mode=mock-ai} \\
 \hline
 \end{tabular}
 \normalsize
@@ -119,11 +119,11 @@ MockDemo & \texttt{\detokenize{/analyze/mock}} & POST & 200, \texttt{\detokenize
 
 \subsection{Dockerfile}
 
-Dockerfile sử dụng \texttt{\detokenize{python:3.11-slim}}, cài dependencies từ \texttt{\detokenize{requirements.txt}}, copy toàn bộ mã nguồn và chạy Uvicorn trên cổng 8000. Thiết kế này khá gọn và phù hợp với demo học phần.
+Dockerfile sử dụng \Code{python:3.11-slim}, cài dependencies từ \Code{requirements.txt}, copy toàn bộ mã nguồn và chạy Uvicorn trên cổng 8000. Thiết kế này khá gọn và phù hợp với demo học phần.
 
 \subsection{docker-compose.yml}
 
-Compose file khai báo service \texttt{\detokenize{ai-vision}}, expose port \texttt{\detokenize{8000:8000}}, đặt \texttt{\detokenize{restart: unless-stopped}} và gắn \texttt{\detokenize{container_name: ai-vision-service}}.
+Compose file khai báo service \Code{ai-vision}, expose port \Code{8000:8000}, đặt \Code{restart: unless-stopped} và gắn \Code{container_name: ai-vision-service}.
 
 \subsection{Kiểm tra container đang chạy}
 
@@ -150,21 +150,21 @@ $ curl http://localhost:8000/model
 \hline
 \textbf{Hạng mục} & \textbf{Lệnh / Minh chứng} & \textbf{Kết quả} \\
 \hline
-Docker build & \texttt{\detokenize{docker compose build}} & Thành công \\
+Docker build & \Code{docker compose build} & Thành công \\
 \hline
-Docker run & \texttt{\detokenize{docker compose up}} & Container running \\
+Docker run & \Code{docker compose up} & Container running \\
 \hline
-Healthcheck & \texttt{\detokenize{curl /health}} & 200 OK \\
+Healthcheck & \Code{curl /health} & 200 OK \\
 \hline
-Model status & \texttt{\detokenize{curl /model}} & \texttt{\detokenize{mode: yolo}} \\
+Model status & \Code{curl /model} & \Code{mode: yolo} \\
 \hline
-Detection test & \texttt{\detokenize{curl POST /api/v1/vision/detect}} & 200, \texttt{\detokenize{detection_id}} \\
+Detection test & \Code{curl POST /api/v1/vision/detect} & 200, \Code{detection_id} \\
 \hline
-Dashboard & Browser mở \texttt{\detokenize{/}} & HTML hiển thị \\
+Dashboard & Browser mở \Code{/} & HTML hiển thị \\
 \hline
-Swagger UI & Browser mở \texttt{\detokenize{/docs}} & OpenAPI docs \\
+Swagger UI & Browser mở \Code{/docs} & OpenAPI docs \\
 \hline
-Smoke test & \texttt{\detokenize{python test_api.py}} & Tất cả pass \\
+Smoke test & \Code{python test_api.py} & Tất cả pass \\
 \hline
 \end{tabular}
 \normalsize
@@ -177,8 +177,8 @@ Smoke test & \texttt{\detokenize{python test_api.py}} & Tất cả pass \\
 \centering
 \caption{Kết quả phân tích ảnh mẫu bằng YOLOv8n}
 \label{tab:yolo-results}
-\small
-\begin{tabular}{|>{\raggedright\arraybackslash}p{3.6cm}|>{\raggedright\arraybackslash}p{2.5cm}|>{\raggedright\arraybackslash}p{2cm}|>{\raggedright\arraybackslash}p{2cm}|>{\raggedright\arraybackslash}p{2.5cm}|>{\raggedright\arraybackslash}p{2cm}|}
+\scriptsize
+\begin{tabular}{|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{2.5cm}|>{\raggedright\arraybackslash}p{1.8cm}|>{\raggedright\arraybackslash}p{1.6cm}|>{\raggedright\arraybackslash}p{2.4cm}|>{\raggedright\arraybackslash}p{1.8cm}|}
 \hline
 \textbf{Ảnh} & \textbf{Đối tượng} & \textbf{Confidence} & \textbf{Risk} & \textbf{Thời gian} & \textbf{Model} \\
 \hline
@@ -236,6 +236,6 @@ Thời gian khởi động & khoảng 5 giây & FastAPI + lazy-load model \\
 
 \section{Kết luận chương}
 
-Chương này đã trình bày các chức năng hoàn thành, phân tích chi tiết module \texttt{\detokenize{vision.py}} và \texttt{\detokenize{main.py}}, smoke test, Postman collection, Docker hóa và đánh giá hiệu năng YOLO. Kết quả cho thấy service chạy ổn định, có fallback hợp lý và đủ minh chứng để trình bày trước hội đồng.
+Chương này đã trình bày các chức năng hoàn thành, phân tích chi tiết module \Code{vision.py} và \Code{main.py}, smoke test, Postman collection, Docker hóa và đánh giá hiệu năng YOLO. Kết quả cho thấy service chạy ổn định, có fallback hợp lý và đủ minh chứng để trình bày trước hội đồng.
 
 
