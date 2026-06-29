@@ -64,7 +64,7 @@ FastAPI là web framework Python được xây dựng trên Starlette và Pydant
 
 \subsection{Docker và Containerization}
 
-Docker đóng gói ứng dụng vào container, giúp mọi môi trường chạy được đồng nhất. Với bài tập lớn, Docker giúp thành viên trong nhóm và giảng viên có thể chạy service trong môi trường giống hệt nhau, chỉ bằng một lệnh `docker compose up`.
+Docker đóng gói ứng dụng vào container, giúp mọi môi trường chạy được đồng nhất. Với bài tập lớn, Docker giúp thành viên trong nhóm và giảng viên có thể chạy service trong môi trường giống hệt nhau, chỉ bằng một lệnh \texttt{\detokenize{docker compose up}}.
 
 \section{Service nhóm phụ trách - AI Vision Service}
 
@@ -83,7 +83,7 @@ Nếu ví hệ thống Smart Campus như cơ thể con người, thì Camera Str
 
 \begin{enumerate}
     \item Nhận ảnh từ Camera Stream qua REST API.
-    \item Tải và giải mã ảnh bằng `httpx` và OpenCV.
+    \item Tải và giải mã ảnh bằng \texttt{\detokenize{httpx}} và OpenCV.
     \item Chạy YOLOv8n để phát hiện đối tượng trong ảnh.
     \item Fallback sang mock AI khi model không khả dụng.
     \item Chuẩn hóa mọi kết quả về cùng một JSON schema.
@@ -124,7 +124,7 @@ Nếu ví hệ thống Smart Campus như cơ thể con người, thì Camera Str
 
 \subsection{Dữ liệu đầu vào}
 
-AI Vision Service nhận request từ Camera Stream với schema `VisionDetectRequest`:
+AI Vision Service nhận request từ Camera Stream với schema \texttt{\detokenize{VisionDetectRequest}}:
 
 \begin{table}[H]
 \centering
@@ -136,7 +136,7 @@ AI Vision Service nhận request từ Camera Stream với schema `VisionDetectRe
 \hline
 camera_id & string & Có & Mã định danh camera. \\
 \hline
-frame_url & string(URL) & Có & URL của ảnh cần phân tích, hỗ trợ alias `image_url`. \\
+frame_url & string(URL) & Có & URL của ảnh cần phân tích, hỗ trợ alias \texttt{\detokenize{image_url}}. \\
 \hline
 timestamp & datetime & Có & Thời điểm camera ghi nhận frame. \\
 \hline
@@ -168,7 +168,7 @@ confidence_score & float/null & Độ tin cậy, chỉ có khi anomaly_detected 
 \hline
 finding & object/null & Chi tiết đối tượng phát hiện. \\
 \hline
-model_mode & string & `yolo` hoặc `mock-ai`. \\
+model_mode & string & \texttt{\detokenize{yolo}} hoặc \texttt{\detokenize{mock-ai}}. \\
 \hline
 notes & string/null & Ghi chú bổ sung. \\
 \hline
@@ -184,25 +184,26 @@ AI Vision Service vừa là Consumer của A2 - Camera Stream, vừa là Provide
 
 \subsection{Dịch vụ upstream}
 
-A2 - Camera Stream là bên gọi chính vào AI Vision. Khi phát hiện chuyển động, Camera Stream tạo `frame_url` và gọi `POST /api/v1/vision/detect`.
+A2 - Camera Stream là bên gọi chính vào AI Vision. Khi phát hiện chuyển động, Camera Stream tạo \texttt{\detokenize{frame_url}} và gọi \texttt{\detokenize{POST /api/v1/vision/detect}}.
 
 \subsection{Dịch vụ downstream}
 
-A6 - Core Business nhận kết quả phát hiện qua adapter endpoint `POST /api/v1/events/camera` để áp dụng rule nghiệp vụ. A5 - Analytics nhận detection log để tổng hợp thống kê.
+A6 - Core Business nhận kết quả phát hiện qua adapter endpoint \texttt{\detokenize{POST /api/v1/events/camera}} để áp dụng rule nghiệp vụ. A5 - Analytics nhận detection log để tổng hợp thống kê.
 
 \section{Sơ đồ Service Boundary}
 
 \begin{sodo}[H]
     \centering
-    \fbox{\parbox[c][5.5cm][c]{0.85\textwidth}{\centering
-    A2 Camera Stream (Provider)\\
-    $\downarrow$\\
-    A4 - AI Vision Service\\
-    Input: `frame_url`\\
+    \small
+    \fbox{\parbox[c][5.5cm][c]{0.78\textwidth}{\centering
+    A2 Camera Stream (Provider)\\[2pt]
+    $\downarrow$\\[2pt]
+    A4 - AI Vision Service\\[2pt]
+    Input: \texttt{\detokenize{frame_url}}\\
     Xử lý: YOLOv8n / Mock AI\\
-    Output: `DetectionResult`\\
-    Adapter: `CoreCameraEvent`\\
-    $\downarrow$\\
+    Output: \texttt{\detokenize{DetectionResult}}\\
+    Adapter: \texttt{\detokenize{CoreCameraEvent}}\\[2pt]
+    $\downarrow$\\[2pt]
     A6 Core Business, A5 Analytics (Consumers)}}
     \SodoCaption{Sơ đồ Service Boundary của AI Vision Service trong Product A}{Nhóm thực hiện}
     \label{fig:service-boundary}
@@ -212,10 +213,11 @@ A6 - Core Business nhận kết quả phát hiện qua adapter endpoint `POST /a
 
 \begin{sodo}[H]
     \centering
-    \fbox{\parbox[c][5cm][c]{0.82\textwidth}{\centering
-    Camera Stream (A2): phân tích ảnh\\
-    Admin/DevOps: kiểm tra sức khỏe service\\
-    Core Business (A6): tạo camera event\\
+    \small
+    \fbox{\parbox[c][5cm][c]{0.76\textwidth}{\centering
+    Camera Stream (A2): phân tích ảnh\\[2pt]
+    Admin/DevOps: kiểm tra sức khỏe service\\[2pt]
+    Core Business (A6): tạo camera event\\[2pt]
     AI Vision Service: xử lý ảnh và trả kết quả}}
     \SodoCaption{Sơ đồ Use-case của AI Vision Service}{Nhóm thực hiện}
     \label{fig:use-case}
@@ -225,8 +227,9 @@ A6 - Core Business nhận kết quả phát hiện qua adapter endpoint `POST /a
 
 \begin{sodo}[H]
     \centering
-    \fbox{\parbox[c][5.5cm][c]{0.82\textwidth}{\centering
-    Host Machine (Windows/Linux)\\
+    \small
+    \fbox{\parbox[c][5.5cm][c]{0.76\textwidth}{\centering
+    Host Machine (Windows/Linux)\\[2pt]
     Docker Engine\\
     Container: ai-vision-service\\
     Uvicorn ASGI Server\\
@@ -240,3 +243,4 @@ A6 - Core Business nhận kết quả phát hiện qua adapter endpoint `POST /a
 \section{Kết luận chương}
 
 Chương này đã trình bày bối cảnh Smart Campus Operations Platform, cơ sở lý thuyết về YOLOv8, FastAPI, Docker và kiến trúc Microservices; vai trò của AI Vision Service như "não thị giác" của hệ thống; phạm vi chức năng, input/output, quan hệ provider-consumer và các sơ đồ boundary, use-case, deployment.
+

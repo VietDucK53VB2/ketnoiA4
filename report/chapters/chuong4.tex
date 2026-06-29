@@ -44,28 +44,28 @@ AI Vision Service sử dụng REST API làm phương thức giao tiếp chính v
 
 \begin{enumerate}
     \item Camera IP liên tục ghi hình và gửi frame đến Camera Stream Service (A2).
-    \item Camera Stream chạy motion detection. Khi phát hiện có chuyển động, nó tạo `frame_url` và gọi `POST /api/v1/vision/detect`.
-    \item AI Vision tải ảnh, phân tích và trả về `DetectionResult`.
+    \item Camera Stream chạy motion detection. Khi phát hiện có chuyển động, nó tạo \texttt{\detokenize{frame_url}} và gọi \texttt{\detokenize{POST /api/v1/vision/detect}}.
+    \item AI Vision tải ảnh, phân tích và trả về \texttt{\detokenize{DetectionResult}}.
     \item Camera Stream nhận kết quả và quyết định bước tiếp theo.
 \end{enumerate}
 
 \subsection{Hợp đồng API}
 
 \begin{itemize}
-    \item Endpoint: `POST /api/v1/vision/detect`
+    \item Endpoint: \texttt{\detokenize{POST /api/v1/vision/detect}}
     \item Method: POST
     \item Content-Type: application/json
-    \item Request: `VisionDetectRequest`
-    \item Response 200: `DetectionResult`
-    \item Response 422: `ProblemDetails` khi `frame_url` không hợp lệ hoặc không tải được
+    \item Request: \texttt{\detokenize{VisionDetectRequest}}
+    \item Response 200: \texttt{\detokenize{DetectionResult}}
+    \item Response 422: \texttt{\detokenize{ProblemDetails}} khi \texttt{\detokenize{frame_url}} không hợp lệ hoặc không tải được
 \end{itemize}
 
 \subsection{Phân tích độ tin cậy}
 
 \begin{itemize}
-    \item Timeout: `httpx` client có timeout 15 giây.
+    \item Timeout: \texttt{\detokenize{httpx}} client có timeout 15 giây.
     \item Retry: hiện chưa có cơ chế retry ở tầng API.
-    \item Idempotency: mỗi request tạo một `detection_id` mới, request giống hệt nhau gửi 2 lần vẫn tạo 2 detection khác nhau.
+    \item Idempotency: mỗi request tạo một \texttt{\detokenize{detection_id}} mới, request giống hệt nhau gửi 2 lần vẫn tạo 2 detection khác nhau.
 \end{itemize}
 
 \section{Kết nối A4 (AI Vision) -> A6 (Core Business)}
@@ -76,7 +76,7 @@ Core Business là "não trung tâm" của toàn bộ Product A. Nó nhận dữ 
 
 \subsection{Adapter Pattern}
 
-Nhóm implement Adapter Pattern để chuyển `DetectionResult` sang `CoreCameraEvent`.
+Nhóm implement Adapter Pattern để chuyển \texttt{\detokenize{DetectionResult}} sang \texttt{\detokenize{CoreCameraEvent}}.
 
 \begin{table}[H]
 \centering
@@ -102,7 +102,7 @@ risk_level(low/medium/high) & risk_level(normal/warning/critical) & Map 3 mức 
 
 \subsection{Logic tự động ra quyết định}
 
-AI Vision không chỉ trả về kết quả phân tích mà còn tự động đề xuất quyết định `core_decision`. Điều này giúp Core Business không cần implement lại logic phân tích.
+AI Vision không chỉ trả về kết quả phân tích mà còn tự động đề xuất quyết định \texttt{\detokenize{core_decision}}. Điều này giúp Core Business không cần implement lại logic phân tích.
 
 \begin{table}[H]
 \centering
@@ -137,22 +137,25 @@ Analytics tổng hợp dữ liệu từ nhiều nguồn để tạo báo cáo th
 Các trường dữ liệu AI Vision cung cấp cho Analytics gồm:
 
 \begin{itemize}
-    \item `detection_id`
-    \item `camera_id`
-    \item `timestamp`
-    \item `anomaly_detected`
-    \item `confidence_score`
-    \item `finding.object_name`
-    \item `finding.risk_level`
-    \item `model_mode`
+    \item \texttt{\detokenize{detection_id}}
+    \item \texttt{\detokenize{camera_id}}
+    \item \texttt{\detokenize{timestamp}}
+    \item \texttt{\detokenize{anomaly_detected}}
+    \item \texttt{\detokenize{confidence_score}}
+    \item \texttt{\detokenize{finding.object_name}}
+    \item \texttt{\detokenize{finding.risk_level}}
+    \item \texttt{\detokenize{model_mode}}
 \end{itemize}
 
 \section{Luồng xử lý End-to-End}
 
 \begin{sodo}[H]
     \centering
-    \fbox{\parbox[c][5.2cm][c]{0.82\textwidth}{\centering
-    Camera IP $\rightarrow$ A2 Camera Stream $\rightarrow$ A4 AI Vision $\rightarrow$ A6 Core Business $\rightarrow$ A7 Notification\\
+    \small
+    \fbox{\parbox[c][5.2cm][c]{0.74\textwidth}{\centering
+    Camera IP $\rightarrow$ A2 Camera Stream\\[2pt]
+    $\rightarrow$ A4 AI Vision $\rightarrow$ A6 Core Business\\[2pt]
+    $\rightarrow$ A7 Notification\\[2pt]
     Song song: A5 Analytics thu thập detection log, camera event log và decision log}}
     \SodoCaption{Luồng xử lý End-to-End trong Smart Campus Product A}{Nhóm thực hiện}
     \label{fig:end-to-end}
@@ -170,7 +173,7 @@ Các trường dữ liệu AI Vision cung cấp cho Analytics gồm:
 \hline
 Service Boundary & 10\% & Tốt & Sơ đồ rõ, input/output/upstream/downstream đầy đủ \\
 \hline
-OpenAPI Contract & 20\% & Tốt & `openapi.yaml`, schema, example, error model, Swagger UI \\
+OpenAPI Contract & 20\% & Tốt & \texttt{\detokenize{openapi.yaml}}, schema, example, error model, Swagger UI \\
 \hline
 Testing & 15\% & Đạt & Postman 7 test case + smoke test, happy path, negative, error \\
 \hline
@@ -178,7 +181,7 @@ Docker/Compose & 20\% & Tốt & Dockerfile + compose, chạy từ repo sạch, h
 \hline
 Integration & 20\% & Đạt & Kết nối A2, adapter cho A6, hợp đồng với A5 \\
 \hline
-Trình bày & 15\% & Tốt & `PRESENTATION.md`, kịch bản 1 phút, thứ tự demo rõ ràng \\
+Trình bày & 15\% & Tốt & \texttt{\detokenize{PRESENTATION.md}}, kịch bản 1 phút, thứ tự demo rõ ràng \\
 \hline
 \end{tabular}
 \Nguon{Nhóm thực hiện}
@@ -194,9 +197,9 @@ Trình bày & 15\% & Tốt & `PRESENTATION.md`, kịch bản 1 phút, thứ tự
 \hline
 \textbf{Thành viên} & \textbf{Vai trò} & \textbf{Nhiệm vụ chính} & \textbf{Tỷ trọng} \\
 \hline
-\textbf{Trịnh Việt Đức} & Nhóm trưởng / Backend Lead & Điều phối nhóm, thiết kế kiến trúc, phát triển `main.py`, `vision.py`, xử lý ảnh, YOLO integration, làm việc với A2/A6/A5, tổng hợp nội dung báo cáo & 40\% \\
+\textbf{Trịnh Việt Đức} & Nhóm trưởng / Backend Lead & Điều phối nhóm, thiết kế kiến trúc, phát triển \texttt{\detokenize{main.py}}, \texttt{\detokenize{vision.py}}, xử lý ảnh, YOLO integration, làm việc với A2/A6/A5, tổng hợp nội dung báo cáo & 40\% \\
 \hline
-\textbf{Nguyễn Quang Đạt} & API/Contract Owner & Viết `openapi.yaml`, Postman collection, smoke test, tài liệu API, hỗ trợ kiểm thử hợp đồng và minh chứng chạy thử & 30\% \\
+\textbf{Nguyễn Quang Đạt} & API/Contract Owner & Viết \texttt{\detokenize{openapi.yaml}}, Postman collection, smoke test, tài liệu API, hỗ trợ kiểm thử hợp đồng và minh chứng chạy thử & 30\% \\
 \hline
 \textbf{Lê Quang Dũng} & DevOps / Report & Docker, docker-compose, minh chứng vận hành, hỗ trợ tổng hợp báo cáo, phụ lục và kiểm tra bản dựng & 30\% \\
 \hline
@@ -222,7 +225,7 @@ Trình bày & 15\% & Tốt & `PRESENTATION.md`, kịch bản 1 phút, thứ tự
 \subsection{Các điểm hạn chế hiện tại}
 
 \begin{itemize}
-    \item `DETECTION_STORE` là Python dict trong RAM, mất toàn bộ dữ liệu khi restart.
+    \item \texttt{\detokenize{DETECTION_STORE}} là Python dict trong RAM, mất toàn bộ dữ liệu khi restart.
     \item Giao tiếp hiện tại hoàn toàn đồng bộ qua REST API.
     \item YOLOv8n nhanh nhưng chưa mạnh ở các bài toán phức tạp.
     \item Chưa có xác thực, endpoint đang công khai.
@@ -281,3 +284,4 @@ Phù hợp & Demo & Production & Production nhẹ \\
 \section{Kết luận chương}
 
 Chương này đã trình bày kết nối của AI Vision với A2, A6, A5, mô hình tích hợp, adapter pattern, matrận quyết định, luồng end-to-end, tự đánh giá theo rubric, phân công công việc, hạn chế và hướng phát triển.
+

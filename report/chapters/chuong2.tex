@@ -12,11 +12,11 @@ AI Vision Service được thiết kế theo mô hình layered architecture vớ
 \hline
 \textbf{Tầng} & \textbf{Mô tả} \\
 \hline
-Tầng API (Presentation Layer) & FastAPI Router trong `main.py`, tiếp nhận request và trả response. \\
+Tầng API (Presentation Layer) & FastAPI Router trong \texttt{\detokenize{main.py}}, tiếp nhận request và trả response. \\
 \hline
-Tầng Nghiệp vụ (Business Logic Layer) & Detection engine trong `vision.py` cùng các Pydantic model. \\
+Tầng Nghiệp vụ (Business Logic Layer) & Detection engine trong \texttt{\detokenize{vision.py}} cùng các Pydantic model. \\
 \hline
-Tầng Tích hợp (Integration Layer) & HTTP client `httpx` và adapter từ A4 sang A6. \\
+Tầng Tích hợp (Integration Layer) & HTTP client \texttt{\detokenize{httpx}} và adapter từ A4 sang A6. \\
 \hline
 Tầng Hạ tầng (Infrastructure Layer) & In-memory store, Docker container, Uvicorn server. \\
 \hline
@@ -28,8 +28,11 @@ Tầng Hạ tầng (Infrastructure Layer) & In-memory store, Docker container, U
 
 \begin{sodo}[H]
     \centering
-    \fbox{\parbox[c][4.8cm][c]{0.82\textwidth}{\centering
-    A2 Camera Stream \rightarrow FastAPI Router \rightarrow HTTPClient \rightarrow YOLO Engine \rightarrow Detection Store \rightarrow DetectionResult}}
+    \small
+    \fbox{\parbox[c][4.8cm][c]{0.74\textwidth}{\centering
+    A2 Camera Stream $\rightarrow$ FastAPI Router\\[2pt]
+    $\rightarrow$ HTTPClient $\rightarrow$ YOLO Engine\\[2pt]
+    $\rightarrow$ Detection Store $\rightarrow$ DetectionResult}}
     \SodoCaption{Sequence diagram - luồng xử lý một detection request}{Nhóm thực hiện}
     \label{fig:sequence}
 \end{sodo}
@@ -37,14 +40,14 @@ Tầng Hạ tầng (Infrastructure Layer) & In-memory store, Docker container, U
 \subsection{Diễn giải từng bước}
 
 \begin{enumerate}
-    \item Camera Stream gọi `POST /api/v1/vision/detect` với JSON chứa `camera_id`, `frame_url`, `timestamp`.
-    \item FastAPI validate request body qua `VisionDetectRequest`. Nếu thiếu trường hoặc sai kiểu, trả về 422 ngay lập tức.
-    \item `_fetch_image_bytes()` sử dụng `httpx.AsyncClient` để tải ảnh từ `frame_url` với timeout 15 giây.
+    \item Camera Stream gọi \texttt{\detokenize{POST /api/v1/vision/detect}} với JSON chứa \texttt{\detokenize{camera_id}}, \texttt{\detokenize{frame_url}}, \texttt{\detokenize{timestamp}}.
+    \item FastAPI validate request body qua \texttt{\detokenize{VisionDetectRequest}}. Nếu thiếu trường hoặc sai kiểu, trả về 422 ngay lập tức.
+    \item \texttt{\detokenize{_fetch_image_bytes()}} sử dụng \texttt{\detokenize{httpx.AsyncClient}} để tải ảnh từ \texttt{\detokenize{frame_url}} với timeout 15 giây.
     \item Ảnh được nhận về dưới dạng bytes và log kích thước để debug.
-    \item `analyze_image()` quyết định dùng YOLO hay mock. Nếu YOLO, ảnh được giải mã bằng OpenCV rồi đưa vào `model.predict()`.
-    \item `DetectionResult` được lưu vào `DETECTION_STORE` với key `detection_id`.
+    \item \texttt{\detokenize{analyze_image()}} quyết định dùng YOLO hay mock. Nếu YOLO, ảnh được giải mã bằng OpenCV rồi đưa vào \texttt{\detokenize{model.predict()}}.
+    \item \texttt{\detokenize{DetectionResult}} được lưu vào \texttt{\detokenize{DETECTION_STORE}} với key \texttt{\detokenize{detection_id}}.
     \item Kết quả được serialize thành JSON và trả về.
-    \item Camera Stream nhận `HTTP 200 OK` kèm JSON body.
+    \item Camera Stream nhận \texttt{\detokenize{HTTP 200 OK}} kèm JSON body.
 \end{enumerate}
 
 \section{Thiết kế Data Models}
@@ -54,22 +57,22 @@ Tầng Hạ tầng (Infrastructure Layer) & In-memory store, Docker container, U
 Các điểm đáng chú ý:
 
 \begin{itemize}
-    \item `frame_url` chấp nhận cả key `frame_url` và `image_url` để giữ backward compatibility.
-    \item `HttpUrl` tự động validate URL hợp lệ.
-    \item `datetime` tự động parse ISO8601 timestamp.
+    \item \texttt{\detokenize{frame_url}} chấp nhận cả key \texttt{\detokenize{frame_url}} và \texttt{\detokenize{image_url}} để giữ backward compatibility.
+    \item \texttt{\detokenize{HttpUrl}} tự động validate URL hợp lệ.
+    \item \texttt{\detokenize{datetime}} tự động parse ISO8601 timestamp.
 \end{itemize}
 
 \subsection{DetectionResult - schema đầu ra chính}
 
 \begin{itemize}
-    \item `confidence_score` chỉ có giá trị khi `anomaly_detected = true`.
-    \item `finding` là `Optional[Finding]`, nếu không có đối tượng phát hiện thì là `null`.
-    \item `model_mode` cho consumer biết kết quả đến từ YOLO thật hay mock.
+    \item \texttt{\detokenize{confidence_score}} chỉ có giá trị khi \texttt{\detokenize{anomaly_detected = true}}.
+    \item \texttt{\detokenize{finding}} là \texttt{\detokenize{Optional[Finding]}}, nếu không có đối tượng phát hiện thì là \texttt{\detokenize{null}}.
+    \item \texttt{\detokenize{model_mode}} cho consumer biết kết quả đến từ YOLO thật hay mock.
 \end{itemize}
 
 \subsection{Discriminated Union - PersonFinding và ObjectFinding}
 
-Pydantic Discriminated Union cho phép tự động chọn schema dựa trên giá trị của `finding_type`. Nếu `finding_type = "person"` thì parse thành `PersonFinding`, còn `finding_type = "object"` thì parse thành `ObjectFinding`.
+Pydantic Discriminated Union cho phép tự động chọn schema dựa trên giá trị của \texttt{\detokenize{finding_type}}. Nếu \texttt{\detokenize{finding_type = "person"}} thì parse thành \texttt{\detokenize{PersonFinding}}, còn \texttt{\detokenize{finding_type = "object"}} thì parse thành \texttt{\detokenize{ObjectFinding}}.
 
 \subsection{CoreCameraEvent - adapter cho Core Business}
 
@@ -99,7 +102,7 @@ risk_level & risk_level & Map 3 mức sang 3 mức \\
 
 \subsection{ProblemDetails - RFC 9457 error model}
 
-Service tuân thủ chuẩn Problem Details cho HTTP APIs. Thay vì trả về lỗi không cấu trúc, mọi lỗi đều được format thành `ProblemDetails` để consumer parse nhất quán.
+Service tuân thủ chuẩn Problem Details cho HTTP APIs. Thay vì trả về lỗi không cấu trúc, mọi lỗi đều được format thành \texttt{\detokenize{ProblemDetails}} để consumer parse nhất quán.
 
 \section{API Endpoints chi tiết}
 
@@ -117,7 +120,7 @@ Trả về HTML dashboard với dark theme, hiển thị tên service, trạng t
 \hline
 \textbf{Status} & \textbf{Response} & \textbf{Ý nghĩa} \\
 \hline
-200 OK & `{"status":"ok","service":"ai-vision-service"}` & Service hoạt động bình thường \\
+200 OK & \texttt{\detokenize{{"status":"ok","service":"ai-vision-service"}}} & Service hoạt động bình thường \\
 \hline
 \end{tabular}
 \Nguon{Nhóm thực hiện}
@@ -125,11 +128,11 @@ Trả về HTML dashboard với dark theme, hiển thị tên service, trạng t
 
 \subsection{GET /model}
 
-Trả về trạng thái của YOLO model. `mode` có thể là `yolo` hoặc `mock-ai`.
+Trả về trạng thái của YOLO model. \texttt{\detokenize{mode}} có thể là \texttt{\detokenize{yolo}} hoặc \texttt{\detokenize{mock-ai}}.
 
 \subsection{POST /api/v1/vision/detect}
 
-Đây là endpoint quan trọng nhất, được Camera Stream gọi khi phát hiện chuyển động. Request gồm `camera_id`, `frame_url`, `timestamp`; response trả về `DetectionResult`.
+Đây là endpoint quan trọng nhất, được Camera Stream gọi khi phát hiện chuyển động. Request gồm \texttt{\detokenize{camera_id}}, \texttt{\detokenize{frame_url}}, \texttt{\detokenize{timestamp}}; response trả về \texttt{\detokenize{DetectionResult}}.
 
 \begin{verbatim}
 {
@@ -160,30 +163,30 @@ Trả về trạng thái của YOLO model. `mode` có thể là `yolo` hoặc `m
 
 \subsection{GET /api/v1/vision/detections/{detection_id}}
 
-Tra cứu kết quả đã lưu. Trả về 404 nếu `detection_id` không tồn tại.
+Tra cứu kết quả đã lưu. Trả về 404 nếu \texttt{\detokenize{detection_id}} không tồn tại.
 
 \subsection{POST /api/v1/events/camera}
 
-Adapter endpoint: nhận `VisionDetectRequest`, chạy detection, rồi chuyển đổi thành `CoreCameraEvent`. Endpoint này dành cho Core Business nếu cần.
+Adapter endpoint: nhận \texttt{\detokenize{VisionDetectRequest}}, chạy detection, rồi chuyển đổi thành \texttt{\detokenize{CoreCameraEvent}}. Endpoint này dành cho Core Business nếu cần.
 
 \subsection{POST /analyze và POST /analyze/mock}
 
 Hai endpoint legacy để backward compatibility:
 
 \begin{itemize}
-    \item `/analyze`: nhận `CameraFrameIn` dùng `image_url`.
-    \item `/analyze/mock`: luôn trả về kết quả mock, không cần tải ảnh thật.
+    \item \texttt{\detokenize{/analyze}}: nhận \texttt{\detokenize{CameraFrameIn}} dùng \texttt{\detokenize{image_url}}.
+    \item \texttt{\detokenize{/analyze/mock}}: luôn trả về kết quả mock, không cần tải ảnh thật.
 \end{itemize}
 
 \section{Mã nguồn tiêu biểu và giải thích}
 
-\subsection{Luồng xử lý chính - `_run_detection()`}
+\subsection{Luồng xử lý chính - \texttt{\detokenize{_run_detection()}}}
 
-Hàm `_run_detection` là orchestrator chính. Nó normalize input, tải ảnh, chạy AI inference, build response và lưu kết quả vào bộ nhớ tạm. Cách tổ chức này bám khá sát Single Responsibility Principle, vì mỗi helper chỉ làm một việc.
+Hàm \texttt{\detokenize{_run_detection}} là orchestrator chính. Nó normalize input, tải ảnh, chạy AI inference, build response và lưu kết quả vào bộ nhớ tạm. Cách tổ chức này bám khá sát Single Responsibility Principle, vì mỗi helper chỉ làm một việc.
 
-\subsection{Adapter - `_map_to_core_camera_event()`}
+\subsection{Adapter - \texttt{\detokenize{_map_to_core_camera_event()}}}
 
-Hàm này chuyển đổi `DetectionResult` thành `CoreCameraEvent`. Logic quyết định dựa trên `anomaly_detected`, `confidence_score`, loại đối tượng và ngưỡng confidence. Nếu phát hiện người với confidence đủ cao thì `unknown_person = true`; nếu không có anomaly thì `core_decision = no_alert`.
+Hàm này chuyển đổi \texttt{\detokenize{DetectionResult}} thành \texttt{\detokenize{CoreCameraEvent}}. Logic quyết định dựa trên \texttt{\detokenize{anomaly_detected}}, \texttt{\detokenize{confidence_score}}, loại đối tượng và ngưỡng confidence. Nếu phát hiện người với confidence đủ cao thì \texttt{\detokenize{unknown_person = true}}; nếu không có anomaly thì \texttt{\detokenize{core_decision = no_alert}}.
 
 \begin{table}[H]
 \centering
@@ -215,19 +218,19 @@ Phát hiện đối tượng, conf $\geq 0.85$ & critical & alert\_required & ob
 \hline
 \textbf{Thư mục / file} & \textbf{Chức năng} \\
 \hline
-`app/main.py` & FastAPI application và API endpoints. \\
+\texttt{\detokenize{app/main.py}} & FastAPI application và API endpoints. \\
 \hline
-`app/vision.py` & YOLOv8n inference engine và mock AI. \\
+\texttt{\detokenize{app/vision.py}} & YOLOv8n inference engine và mock AI. \\
 \hline
-`openapi.yaml` & Đặc tả OpenAPI 3.1.0. \\
+\texttt{\detokenize{openapi.yaml}} & Đặc tả OpenAPI 3.1.0. \\
 \hline
-`Dockerfile` & Định nghĩa Docker image. \\
+\texttt{\detokenize{Dockerfile}} & Định nghĩa Docker image. \\
 \hline
-`docker-compose.yml` & Cấu hình Docker Compose. \\
+\texttt{\detokenize{docker-compose.yml}} & Cấu hình Docker Compose. \\
 \hline
-`test_api.py` & Smoke test tự động. \\
+\texttt{\detokenize{test_api.py}} & Smoke test tự động. \\
 \hline
-`postman/` & Collection và environment để kiểm thử API. \\
+\texttt{\detokenize{postman/}} & Collection và environment để kiểm thử API. \\
 \hline
 \end{tabular}
 \Nguon{Nhóm thực hiện}
@@ -236,3 +239,4 @@ Phát hiện đối tượng, conf $\geq 0.85$ & critical & alert\_required & ob
 \section{Kết luận chương}
 
 Chương này đã trình bày kiến trúc phân tầng, sequence xử lý detection request, thiết kế data models, endpoint chi tiết, đoạn mã tiêu biểu và cấu trúc repository. Đây là nền tảng để sang chương 3, nơi nhóm mô tả việc cài đặt, kiểm thử và đóng gói Docker.
+
