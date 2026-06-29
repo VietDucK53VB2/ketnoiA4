@@ -67,6 +67,14 @@ python test_api.py --base-url http://127.0.0.1:8000 --image-url https://www.ultr
 - Open [report/main.pdf](report/main.pdf) for the current report PDF.
 - Open [report/main.tex](report/main.tex) if you want to edit the report source.
 
+## Report build note
+
+The LaTeX report uses `fontspec`, so it must be compiled with **XeLaTeX**.
+
+- In Overleaf, open **Menu** and set **Compiler** to **XeLaTeX**.
+- If you build locally with `latexmk`, the repo already includes [`.latexmkrc`](.latexmkrc) to force XeLaTeX.
+- The main report source is [report/main.tex](report/main.tex).
+
 ## Notes
 
 - The service prefers YOLOv8n.
