@@ -192,72 +192,26 @@ Các trường dữ liệu AI Vision cung cấp cho Analytics gồm:
 
 \begin{figure}[H]
 \centering
-\begin{tikzpicture}[
-    font=\ReportDiagramFont,
-    panel/.style={rectangle,draw=black,line width=0.8pt,minimum width=12.4cm,minimum height=6.0cm,align=left},
-    row/.style={rectangle,draw=black,line width=0.5pt,minimum width=10.8cm,minimum height=0.62cm,align=left}
-]
-    \node[panel] at (0,0) {};
-    \node[anchor=north west,font=\bfseries\ReportDiagramFont] at (-5.95,2.75) {Swagger UI};
-    \node[anchor=north west] at (-5.95,2.25) {\texttt{/docs} -- AI Vision Service};
-    \node[row,fill=gray!10] at (0,1.35) {\hspace{0.2cm}\textbf{GET} \texttt{/health} \hfill Health check};
-    \node[row,fill=gray!10] at (0,0.55) {\hspace{0.2cm}\textbf{GET} \texttt{/model} \hfill Model status};
-    \node[row,fill=gray!10] at (0,-0.25) {\hspace{0.2cm}\textbf{POST} \texttt{/api/v1/vision/detect} \hfill Run detection};
-    \node[row,fill=gray!10] at (0,-1.05) {\hspace{0.2cm}\textbf{POST} \texttt{/api/v1/events/camera} \hfill Core adapter};
-    \node[anchor=west] at (-5.4,-2.1) {Schemas: VisionDetectRequest, DetectionResult, ProblemDetails};
-\end{tikzpicture}
+\includegraphics[width=0.96\textwidth]{images/swagger-ui.png}
 \caption{Swagger UI -- Tài liệu API tự động của AI Vision Service}
 \label{fig:swagger-ui}
-\Nguon{Nhóm thực hiện}
+\Nguon{Ảnh chụp từ giao diện Swagger UI của AI Vision Service}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\begin{tikzpicture}[
-    font=\ReportDiagramFont,
-    panel/.style={rectangle,draw=black,line width=0.8pt,minimum width=12.4cm,minimum height=6.0cm,align=left},
-    cell/.style={rectangle,draw=black,line width=0.5pt,minimum height=0.62cm,align=left}
-]
-    \node[panel] at (0,0) {};
-    \node[anchor=north west,font=\bfseries\ReportDiagramFont] at (-5.95,2.75) {Postman Collection -- AI Vision};
-    \node[cell,minimum width=3.3cm,fill=gray!10] at (-4.0,1.55) {\hspace{0.15cm}Request};
-    \node[cell,minimum width=3.3cm,fill=gray!10] at (-0.45,1.55) {\hspace{0.15cm}Status};
-    \node[cell,minimum width=3.3cm,fill=gray!10] at (3.1,1.55) {\hspace{0.15cm}Result};
-    \foreach \y/\name/\status/\result in {
-        0.75/HealthCheck/200 OK/Pass,
-        0.05/ModelStatus/200 OK/Pass,
-        -0.65/Detection Happy Path/200 OK/Pass,
-        -1.35/Detection Invalid URL/422/Pass,
-        -2.05/Lookup Detection/200 OK/Pass
-    } {
-        \node[cell,minimum width=3.3cm] at (-4.0,\y) {\hspace{0.15cm}\name};
-        \node[cell,minimum width=3.3cm] at (-0.45,\y) {\hspace{0.15cm}\status};
-        \node[cell,minimum width=3.3cm] at (3.1,\y) {\hspace{0.15cm}\result};
-    }
-\end{tikzpicture}
+\includegraphics[width=0.96\textwidth]{images/postman-newman-results.png}
 \caption{Postman -- Kết quả kiểm thử tích hợp}
 \label{fig:postman-tests}
-\Nguon{Nhóm thực hiện}
+\Nguon{Kết quả chạy Postman collection bằng Newman}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\begin{tikzpicture}[
-    font=\ReportDiagramFont,
-    panel/.style={rectangle,draw=black,line width=0.8pt,minimum width=12.4cm,minimum height=5.2cm,align=left},
-    row/.style={rectangle,draw=black,line width=0.5pt,minimum width=10.8cm,minimum height=0.64cm,align=left}
-]
-    \node[panel] at (0,0) {};
-    \node[anchor=north west,font=\bfseries\ReportDiagramFont] at (-5.95,2.35) {Docker Compose};
-    \node[anchor=north west] at (-5.95,1.9) {\texttt{docker compose ps}};
-    \node[row,fill=gray!10] at (0,0.95) {\hspace{0.2cm}NAME \hfill STATUS \hfill PORTS};
-    \node[row] at (0,0.15) {\hspace{0.2cm}ai-vision-service \hfill Up \hfill 0.0.0.0:8000->8000/tcp};
-    \node[row] at (0,-0.65) {\hspace{0.2cm}Image: ai-vision-service \hfill Restart: unless-stopped};
-    \node[anchor=west] at (-5.4,-1.65) {Healthcheck: \texttt{GET /health} returns \texttt{status=ok}};
-\end{tikzpicture}
+\includegraphics[width=0.96\textwidth]{images/docker-container-running.png}
 \caption{Docker -- Container AI Vision Service đang hoạt động}
 \label{fig:docker-running}
-\Nguon{Nhóm thực hiện}
+\Nguon{Kết quả thực tế từ lệnh \Code{docker ps}}
 \end{figure}
 
 \section{Tự đánh giá theo Rubric học phần}
