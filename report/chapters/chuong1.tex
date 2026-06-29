@@ -219,12 +219,46 @@ A6 - Core Business nhận kết quả phát hiện qua adapter endpoint \Code{PO
 
 \begin{sodo}[H]
     \centering
-    \ReportTableFont
-    \fbox{\parbox[c][5cm][c]{0.76\textwidth}{\centering
-    Camera Stream (A2): phân tích ảnh\\[2pt]
-    Admin/DevOps: kiểm tra sức khỏe service\\[2pt]
-    Core Business (A6): tạo camera event\\[2pt]
-    AI Vision Service: xử lý ảnh và trả kết quả}}
+    \begin{tikzpicture}[
+        font=\ReportTableFont,
+        actor/.style={
+            rectangle,
+            draw=black,
+            line width=0.8pt,
+            minimum width=2.7cm,
+            minimum height=0.9cm,
+            align=center
+        },
+        usecase/.style={
+            ellipse,
+            draw=black,
+            line width=0.8pt,
+            minimum width=3.9cm,
+            minimum height=1.2cm,
+            align=center
+        },
+        relation/.style={draw=black,line width=0.7pt},
+        boundary/.style={draw=black,dashed,line width=0.7pt}
+    ]
+        \node[actor] (camera) at (0,4.3) {Camera Stream\\(A2)};
+        \node[actor,minimum width=2.3cm,minimum height=0.65cm] (admin) at (0,1.7) {Admin / DevOps};
+        \node[actor] (core) at (11.4,3.0) {Core Business\\(A6)};
+
+        \node[usecase] (detect) at (5.2,4.25) {Phân tích ảnh\\(\texttt{POST /detect})};
+        \node[usecase] (lookup) at (5.2,2.3) {Tra cứu kết quả\\(\texttt{GET /detections/:id})};
+        \node[usecase] (event) at (5.2,0.65) {Tạo camera event\\(\texttt{POST /events/camera})};
+        \node[usecase] (health) at (5.2,-1.35) {Kiểm tra sức khỏe\\(\texttt{GET /health})};
+
+        \draw[boundary] (1.25,-2.05) rectangle (10.55,4.75);
+        \node[anchor=south east,font=\bfseries\ReportTableFont] at (10.55,4.75) {AI Vision Service};
+
+        \draw[relation] (camera.east) -- (detect.west);
+        \draw[relation] (admin.east) -- (lookup.west);
+        \draw[relation] (admin.east) -- (event.west);
+        \draw[relation] (admin.south east) -- (health.north west);
+        \draw[relation] (core.west) -- (event.east);
+        \draw[relation] (core.south west) -- (health.north east);
+    \end{tikzpicture}
     \SodoCaption{Sơ đồ Use-case của AI Vision Service}{Nhóm thực hiện}
     \label{fig:use-case}
 \end{sodo}
