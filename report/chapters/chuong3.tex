@@ -129,14 +129,22 @@ Compose file khai báo service \Code{ai-vision}, expose port qua \Code{APP_PORT}
 
 \begin{verbatim}
 $ docker compose ps
-NAME STATUS PORTS
-ai-vision-service Up 2 minutes 0.0.0.0:8000->8000/tcp
+NAME                STATUS         PORTS
+ai-vision-service   Up 2 minutes   0.0.0.0:8000->8000/tcp
 
 $ curl http://localhost:8000/health
-{"status":"ok","service":"ai-vision-service"}
+{
+  "status": "ok",
+  "service": "ai-vision-service"
+}
 
 $ curl http://localhost:8000/model
-{"model_name":"yolov8n.pt","ultralytics_available":true,"loaded":true,"mode":"yolo"}
+{
+  "model_name": "yolov8n.pt",
+  "ultralytics_available": true,
+  "loaded": true,
+  "mode": "yolo"
+}
 \end{verbatim}
 
 \section{Minh chứng vận hành}
