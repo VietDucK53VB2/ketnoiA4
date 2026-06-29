@@ -34,7 +34,7 @@
 \normalsize
 
 \usepackage{indentfirst}
-\setlength{\parindent}{1.0cm}
+\setlength{\parindent}{1.27cm}
 \setlength{\parskip}{6pt}
 
 \usepackage{graphicx}
@@ -70,17 +70,20 @@
 \Urlmuskip=0mu plus 2mu
 \emergencystretch=2em
 \newcommand{\Code}[1]{\path{#1}}
+\newcommand{\ReportTableFont}{\fontsize{12pt}{14pt}\selectfont}
 \sloppy
 
-\setlength{\headheight}{14pt}
+\setlength{\headheight}{17pt}
 \setlength{\headsep}{10pt}
 \setlength{\footskip}{18pt}
 \pagestyle{fancy}
 \fancyhf{}
+\fancyhead[C]{\thepage}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
 \fancypagestyle{plain}{
     \fancyhf{}
+    \fancyhead[C]{\thepage}
     \renewcommand{\headrulewidth}{0pt}
     \renewcommand{\footrulewidth}{0pt}
 }
@@ -179,7 +182,7 @@
     \fi
     \vspace{6pt}
     \begingroup
-    \fontsize{12pt}{13pt}\selectfont
+    \ReportTableFont
     \renewcommand{\arraystretch}{1.5}
     \def\ReportListPrefix{#3}%
     \def\numberline##1{\ReportListPrefix~##1.\enspace}%

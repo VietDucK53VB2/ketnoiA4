@@ -18,7 +18,7 @@ Một trong những yêu cầu quan trọng nhất của bài tập lớn là se
 \centering
 \caption{So sánh giao tiếp đồng bộ và bất đồng bộ}
 \label{tab:sync-async}
-\small
+\ReportTableFont
 \begin{tabular}{|>{\raggedright\arraybackslash}p{3cm}|>{\raggedright\arraybackslash}p{5cm}|>{\raggedright\arraybackslash}p{5cm}|}
 \hline
 \textbf{Tiêu chí} & \textbf{Đồng bộ (REST API)} & \textbf{Bất đồng bộ (Message Queue)} \\
@@ -84,7 +84,7 @@ Nhóm implement Adapter Pattern để chuyển \Code{DetectionResult} sang \Code
 \centering
 \caption{Mapping giữa AI Vision và Core Business}
 \label{tab:ai-core-mapping}
-\small
+\ReportTableFont
 \begin{tabular}{|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{5cm}|}
 \hline
 \textbf{AI Vision} & \textbf{Core Business} & \textbf{Ghi chú} \\
@@ -112,7 +112,7 @@ AI Vision không chỉ trả về kết quả phân tích mà còn tự động 
 \centering
 \caption{Ma trận quyết định của AI Vision}
 \label{tab:decision-matrix}
-\scriptsize
+\ReportTableFont
 \begin{tabular}{|>{\raggedright\arraybackslash}p{4.0cm}|>{\raggedright\arraybackslash}p{2.1cm}|>{\raggedright\arraybackslash}p{3.0cm}|>{\raggedright\arraybackslash}p{4.0cm}|}
 \hline
 \textbf{Kịch bản} & \textbf{risk\_level} & \textbf{core\_decision} & \textbf{reason} \\
@@ -157,7 +157,7 @@ Các trường dữ liệu AI Vision cung cấp cho Analytics gồm:
 
 \begin{sodo}[H]
     \centering
-    \small
+    \ReportTableFont
     \fbox{\parbox[c][5.2cm][c]{0.74\textwidth}{\centering
     Camera IP $\rightarrow$ A2 Camera Stream\\[2pt]
     $\rightarrow$ A4 AI Vision $\rightarrow$ A6 Core Business\\[2pt]
@@ -173,7 +173,7 @@ Các trường dữ liệu AI Vision cung cấp cho Analytics gồm:
 \centering
 \caption{Tự đánh giá chi tiết theo Rubric}
 \label{tab:rubric}
-\small
+\ReportTableFont
 \begin{tabular}{|>{\raggedright\arraybackslash}p{3.6cm}|>{\raggedright\arraybackslash}p{1.8cm}|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}p{5.8cm}|}
 \hline
 \textbf{Tiêu chí} & \textbf{Trọng số} & \textbf{Mức đạt} & \textbf{Minh chứng} \\
@@ -201,7 +201,7 @@ Trình bày & 15\% & Tốt & \Code{PRESENTATION.md}, kịch bản 1 phút, thứ
 \centering
 \caption{Phân công công việc nhóm A4}
 \label{tab:assignment}
-\scriptsize
+\ReportTableFont
 \begin{tabular}{|>{\raggedright\arraybackslash}p{3.5cm}|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{5.7cm}|>{\centering\arraybackslash}p{1.4cm}|}
 \hline
 \textbf{Thành viên} & \textbf{Vai trò} & \textbf{Nhiệm vụ chính} & \textbf{Tỷ trọng} \\
@@ -273,7 +273,7 @@ Hai hạn chế chính hiện tại là lưu trữ không bền vững và chưa
 \centering
 \caption{So sánh phương án lưu trữ và xác thực}
 \label{tab:security-options}
-\small
+\ReportTableFont
 \begin{tabular}{|>{\raggedright\arraybackslash}p{3cm}|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{3.2cm}|}
 \hline
 \textbf{Tiêu chí} & \textbf{Hiện tại} & \textbf{PostgreSQL + JWT} & \textbf{Redis + API Key} \\

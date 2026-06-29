@@ -8,7 +8,7 @@ AI Vision Service được thiết kế theo mô hình layered architecture vớ
 \centering
 \caption{Kiến trúc phân tầng của AI Vision Service}
 \label{tab:layered-arch}
-\small
+\ReportTableFont
 \begin{tabular}{|>{\raggedright\arraybackslash}p{3.8cm}|>{\raggedright\arraybackslash}p{9.4cm}|}
 \hline
 \textbf{Tầng} & \textbf{Mô tả} \\
@@ -30,7 +30,7 @@ Hạ tầng & In-memory store, Docker container và Uvicorn server. \\
 
 \begin{sodo}[H]
     \centering
-    \small
+    \ReportTableFont
     \fbox{\parbox[c][4.8cm][c]{0.74\textwidth}{\centering
     A2 Camera Stream $\rightarrow$ FastAPI Router\\[2pt]
     $\rightarrow$ HTTP Client $\rightarrow$ YOLO Engine\\[2pt]
@@ -73,7 +73,7 @@ Adapter chuyển đổi ngôn ngữ dữ liệu của AI Vision sang ngôn ngữ
 \centering
 \caption{Mapping giữa AI Vision và Core Business}
 \label{tab:mapping-core}
-\small
+\ReportTableFont
 \begin{tabular}{|>{\raggedright\arraybackslash}p{3.6cm}|>{\raggedright\arraybackslash}p{3.6cm}|>{\raggedright\arraybackslash}p{6.1cm}|}
 \hline
 \textbf{AI Vision} & \textbf{Core Business} & \textbf{Ghi chú} \\
@@ -109,7 +109,7 @@ Endpoint này trả về dashboard HTML đơn giản để kiểm tra trạng th
 \centering
 \caption{GET /health - response}
 \label{tab:health}
-\small
+\ReportTableFont
 \begin{tabular}{|>{\raggedright\arraybackslash}p{2.1cm}|>{\raggedright\arraybackslash}p{5.0cm}|>{\raggedright\arraybackslash}p{6.0cm}|}
 \hline
 \textbf{Status} & \textbf{Response} & \textbf{Ý nghĩa} \\
@@ -173,7 +173,7 @@ Hàm này chuyển \Code{DetectionResult} thành \Code{CoreCameraEvent}. Logic q
 \centering
 \caption{Logic chuyển đổi DetectionResult $\rightarrow$ CoreCameraEvent}
 \label{tab:decision-table}
-\small
+\ReportTableFont
 \begin{tabular}{|>{\raggedright\arraybackslash}p{4.1cm}|>{\raggedright\arraybackslash}p{2.1cm}|>{\raggedright\arraybackslash}p{3.0cm}|>{\raggedright\arraybackslash}p{4.0cm}|}
 \hline
 \textbf{Điều kiện} & \textbf{risk\_level} & \textbf{core\_decision} & \textbf{reason} \\
@@ -195,7 +195,7 @@ Phát hiện đối tượng, conf $\geq$ 0.85 & critical & alert\_required & ob
 \centering
 \caption{Cấu trúc thư mục dự án AI Vision Service}
 \label{tab:repo-structure}
-\small
+\ReportTableFont
 \begin{tabular}{|>{\raggedright\arraybackslash}p{4.5cm}|>{\raggedright\arraybackslash}p{8.5cm}|}
 \hline
 \textbf{Thư mục / file} & \textbf{Chức năng} \\

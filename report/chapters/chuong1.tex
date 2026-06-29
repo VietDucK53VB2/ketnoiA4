@@ -30,7 +30,7 @@ Toàn bộ Product A bao gồm 7 service:
 \centering
 \caption{Các service trong Smart Campus Product A}
 \label{tab:services-product-a}
-\small
+\ReportTableFont
 \begin{tabular}{|>{\raggedright\arraybackslash}p{2.0cm}|>{\raggedright\arraybackslash}p{3.1cm}|>{\raggedright\arraybackslash}p{4.4cm}|>{\raggedright\arraybackslash}p{3.0cm}|}
 \hline
 \textbf{Mã nhóm} & \textbf{Tên service} & \textbf{Vai trò} & \textbf{Độ phức tạp} \\
@@ -132,7 +132,7 @@ AI Vision Service nhận request từ Camera Stream với schema \Code{VisionDet
 \centering
 \caption{VisionDetectRequest - schema đầu vào}
 \label{tab:vision-request}
-\small
+\ReportTableFont
 \begin{tabular}{|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{3.0cm}|>{\raggedright\arraybackslash}p{2.4cm}|>{\raggedright\arraybackslash}p{5.0cm}|}
 \hline
 \textbf{Trường} & \textbf{Kiểu dữ liệu} & \textbf{Bắt buộc} & \textbf{Mô tả} \\
@@ -154,7 +154,7 @@ timestamp & datetime & Có & Thời điểm camera ghi nhận frame. \\
 \centering
 \caption{DetectionResult - schema đầu ra}
 \label{tab:detection-result}
-\small
+\ReportTableFont
 \begin{tabular}{|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{8.2cm}|}
 \hline
 \textbf{Trường} & \textbf{Kiểu} & \textbf{Ý nghĩa} \\
@@ -200,7 +200,7 @@ A6 - Core Business nhận kết quả phát hiện qua adapter endpoint \Code{PO
 
 \begin{sodo}[H]
     \centering
-    \small
+    \ReportTableFont
     \fbox{\parbox[c][5.5cm][c]{0.78\textwidth}{\centering
     A2 Camera Stream (Provider)\\[2pt]
     $\downarrow$\\[2pt]
@@ -219,7 +219,7 @@ A6 - Core Business nhận kết quả phát hiện qua adapter endpoint \Code{PO
 
 \begin{sodo}[H]
     \centering
-    \small
+    \ReportTableFont
     \fbox{\parbox[c][5cm][c]{0.76\textwidth}{\centering
     Camera Stream (A2): phân tích ảnh\\[2pt]
     Admin/DevOps: kiểm tra sức khỏe service\\[2pt]
@@ -233,7 +233,7 @@ A6 - Core Business nhận kết quả phát hiện qua adapter endpoint \Code{PO
 
 \begin{sodo}[H]
     \centering
-    \small
+    \ReportTableFont
     \fbox{\parbox[c][5.5cm][c]{0.76\textwidth}{\centering
     Host Machine (Windows/Linux)\\[2pt]
     Docker Engine\\

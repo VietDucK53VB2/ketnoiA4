@@ -8,7 +8,7 @@ AI Vision Service đã được cài đặt đầy đủ 11 chức năng theo y�
 \centering
 \caption{Trạng thái hoàn thành các chức năng}
 \label{tab:function-status}
-\small
+\ReportTableFont
 \begin{tabular}{|>{\raggedright\arraybackslash}p{5.2cm}|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{6cm}|}
 \hline
 \textbf{Chức năng} & \textbf{Trạng thái} & \textbf{Minh chứng} \\
@@ -57,7 +57,6 @@ Module này chịu trách nhiệm toàn bộ logic AI. Nó có các thành phầ
 
 \Code{main.py} là "mặt tiền" của service. Mã nguồn gồm:
 
-\small
 \begin{itemize}
     \item Pydantic models:
     \newline \Code{VisionDetectRequest}, \Code{DetectionResult}
@@ -69,13 +68,11 @@ Module này chịu trách nhiệm toàn bộ logic AI. Nó có các thành phầ
     \item Dashboard HTML template.
     \item Route handlers cho 7 endpoint.
 \end{itemize}
-\normalsize
 
 \subsection{test_api.py - Smoke Test Automation}
 
 Script smoke test tự động kiểm tra:
 
-\small
 \begin{enumerate}
     \item Health check.
     \item Model status.
@@ -83,7 +80,6 @@ Script smoke test tự động kiểm tra:
     \item Lookup by detection\_id.
     \item Mock demo.
 \end{enumerate}
-\normalsize
 
 \section{Kiểm thử tích hợp}
 
@@ -91,7 +87,7 @@ Script smoke test tự động kiểm tra:
 \centering
 \caption{Postman Test Cases}
 \label{tab:postman-tests}
-\scriptsize
+\ReportTableFont
 \begin{tabular}{|>{\raggedright\arraybackslash}p{3.7cm}|>{\raggedright\arraybackslash}p{4.7cm}|>{\raggedright\arraybackslash}p{1.6cm}|>{\raggedright\arraybackslash}p{3.9cm}|}
 \hline
 \textbf{Test Case} & \textbf{Endpoint} & \textbf{Method} & \textbf{Kỳ vọng} \\
@@ -145,7 +141,7 @@ $ curl http://localhost:8000/model
 \centering
 \caption{Minh chứng vận hành AI Vision Service}
 \label{tab:runtime-proof}
-\small
+\ReportTableFont
 \begin{tabular}{|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{5cm}|>{\raggedright\arraybackslash}p{4cm}|}
 \hline
 \textbf{Hạng mục} & \textbf{Lệnh / Minh chứng} & \textbf{Kết quả} \\
@@ -177,7 +173,7 @@ Smoke test & \Code{python test_api.py} & Tất cả pass \\
 \centering
 \caption{Kết quả phân tích ảnh mẫu bằng YOLOv8n}
 \label{tab:yolo-results}
-\scriptsize
+\ReportTableFont
 \begin{tabular}{|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{2.5cm}|>{\raggedright\arraybackslash}p{1.8cm}|>{\raggedright\arraybackslash}p{1.6cm}|>{\raggedright\arraybackslash}p{2.4cm}|>{\raggedright\arraybackslash}p{1.8cm}|}
 \hline
 \textbf{Ảnh} & \textbf{Đối tượng} & \textbf{Confidence} & \textbf{Risk} & \textbf{Thời gian} & \textbf{Model} \\
@@ -212,7 +208,7 @@ Mock mode & person/vehicle & 0.62-0.98 & low-high & <0.1s & mock-ai \\
 \centering
 \caption{Tài nguyên hệ thống khi chạy AI Vision Service}
 \label{tab:resources}
-\small
+\ReportTableFont
 \begin{tabular}{|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{5cm}|}
 \hline
 \textbf{Thành phần} & \textbf{Mức tiêu thụ} & \textbf{Ghi chú} \\
