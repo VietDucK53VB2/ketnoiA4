@@ -171,12 +171,22 @@
 \renewcommand{\cftsubsubsecpagefont}{\bfseries\fontsize{12pt}{14pt}\selectfont}
 \renewcommand{\cftsubsubsecaftersnum}{.}
 \renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsubsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsubsubsecleader}{\cftdotfill{\cftdotsep}}
 \setlength{\cftbeforechapskip}{6pt}
 
 \renewcommand{\cfttoctitlefont}{\hfill\bfseries\fontsize{14pt}{16pt}\selectfont\MakeUppercase}
 \renewcommand{\cftaftertoctitle}{\hfill}
 \setlength{\cftbeforetoctitleskip}{0pt}
 \setlength{\cftaftertoctitleskip}{18pt}
+
+\newcommand{\BoldTableOfContents}{%
+    \begingroup
+    \bfseries
+    \tableofcontents
+    \endgroup
+}
 
 \makeatletter
 \newcommand{\ReportListTable}[4]{%

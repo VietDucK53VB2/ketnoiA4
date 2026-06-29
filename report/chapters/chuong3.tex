@@ -73,7 +73,7 @@ Module này chịu trách nhiệm toàn bộ logic AI. Nó có các thành phầ
 
 FastAPI và Pydantic validate request body ngay tại tầng API. Các lỗi thiếu trường, sai kiểu dữ liệu hoặc \Code{frame_url} không hợp lệ được trả về theo \Code{ProblemDetails} với status code phù hợp, chủ yếu là \Code{422}. Khi tra cứu \Code{detection_id} không tồn tại, service trả về \Code{404}; khi model YOLO không load được, service tự fallback sang \Code{mock-ai} để demo vẫn chạy ổn định.
 
-\subsection{test_api.py - Smoke Test Automation}
+\subsection{test\_api.py -- Smoke Test Automation}
 
 Script smoke test tự động kiểm tra:
 
