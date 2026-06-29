@@ -1,0 +1,259 @@
+% =====================================================
+% Cau hinh chung cho bao cao AI Vision
+% =====================================================
+
+\usepackage{fontspec}
+\IfFontExistsTF{Times New Roman}
+  {\setmainfont{Times New Roman}}
+  {\setmainfont{Tinos}}
+
+\usepackage{polyglossia}
+\setdefaultlanguage{vietnamese}
+
+\usepackage[
+    a4paper,
+    left=3.0cm,
+    right=1.5cm,
+    top=2.0cm,
+    bottom=2.0cm
+]{geometry}
+
+\usepackage{setspace}
+\onehalfspacing
+
+\makeatletter
+\renewcommand{\normalsize}{%
+    \@setfontsize\normalsize{13pt}{15.6pt}%
+    \abovedisplayskip 13pt plus 3pt minus 7pt%
+    \abovedisplayshortskip 0pt plus 4pt%
+    \belowdisplayshortskip 6.5pt plus 3.5pt minus 3pt%
+    \belowdisplayskip \abovedisplayskip
+    \let\@listi\@listI
+}
+\makeatother
+\normalsize
+
+\usepackage{indentfirst}
+\setlength{\parindent}{1.27cm}
+\setlength{\parskip}{6pt}
+
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{caption}
+\usepackage{amsmath, amssymb}
+\usepackage{enumitem}
+\setlist[itemize]{
+    label=-,
+    leftmargin=1.27cm,
+    labelsep=0.5em
+}
+\usepackage{titlesec}
+\usepackage{tocloft}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{eso-pic}
+\usepackage{fancyhdr}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    urlcolor=blue
+}
+
+\setlength{\headheight}{14pt}
+\setlength{\headsep}{10pt}
+\setlength{\footskip}{18pt}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
+}
+
+\counterwithin{table}{chapter}
+\counterwithin{figure}{chapter}
+\renewcommand{\thetable}{\thechapter.\arabic{table}}
+\renewcommand{\thefigure}{\thechapter.\arabic{figure}}
+
+\newfloat{sodo}{H}{los}[chapter]
+\floatname{sodo}{Sơ đồ}
+\renewcommand{\thesodo}{\thechapter.\arabic{sodo}}
+\makeatletter
+\newcommand{\l@sodo}[2]{%
+    \begingroup
+    \let\ReportOriginalNumberline\numberline
+    \renewcommand{\numberline}[1]{%
+        \ReportOriginalNumberline{Sơ đồ~##1}}%
+    \@dottedtocline{1}{0pt}{2.8cm}{#1}{#2}%
+    \endgroup
+}
+\makeatother
+
+\captionsetup{
+    font=normalsize,
+    labelfont=normalfont,
+    textfont=normalfont,
+    labelsep=period,
+    justification=centering
+}
+\captionsetup[table]{name=Bảng,position=top}
+\captionsetup[figure]{name=Hình,position=bottom}
+\captionsetup[sodo]{name=Sơ đồ,position=bottom}
+
+\renewcommand{\listtablename}{BẢNG}
+\renewcommand{\listfigurename}{HÌNH, SƠ ĐỒ}
+\renewcommand{\contentsname}{MỤC LỤC}
+\renewcommand{\bibname}{TÀI LIỆU THAM KHẢO}
+
+\titleformat{\chapter}
+  [display]
+  {\centering\bfseries\fontsize{14pt}{16pt}\selectfont}
+  {Chương \thechapter}
+  {0.3cm}
+  {\MakeUppercase}
+
+\titlespacing*{\chapter}{0pt}{0pt}{18pt}
+
+\titleformat{\section}
+  {\bfseries\fontsize{13pt}{15pt}\selectfont}
+  {\thesection}
+  {0.5em}
+  {}
+
+\titleformat{\subsection}
+  {\bfseries\itshape\fontsize{13pt}{15pt}\selectfont}
+  {\thesubsection}
+  {0.5em}
+  {}
+
+\titleformat{\subsubsection}
+  {\itshape\fontsize{13pt}{15pt}\selectfont}
+  {\thesubsubsection}
+  {0.5em}
+  {}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\renewcommand{\cftchapfont}{\bfseries\fontsize{12pt}{14pt}\selectfont}
+\renewcommand{\cftchappagefont}{\bfseries\fontsize{12pt}{14pt}\selectfont}
+\renewcommand{\cftchappresnum}{CHƯƠNG~}
+\renewcommand{\cftchapaftersnum}{.}
+\setlength{\cftchapnumwidth}{2.5cm}
+\renewcommand{\cftsecfont}{\bfseries\fontsize{12pt}{14pt}\selectfont}
+\renewcommand{\cftsecpagefont}{\bfseries\fontsize{12pt}{14pt}\selectfont}
+\renewcommand{\cftsecaftersnum}{.}
+\renewcommand{\cftsubsecfont}{\itshape\fontsize{12pt}{14pt}\selectfont}
+\renewcommand{\cftsubsecpagefont}{\fontsize{12pt}{14pt}\selectfont}
+\renewcommand{\cftsubsecaftersnum}{.}
+\renewcommand{\cftsubsubsecfont}{\fontsize{12pt}{14pt}\selectfont}
+\renewcommand{\cftsubsubsecpagefont}{\fontsize{12pt}{14pt}\selectfont}
+\renewcommand{\cftsubsubsecaftersnum}{.}
+\renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}}
+\setlength{\cftbeforechapskip}{6pt}
+
+\renewcommand{\cfttoctitlefont}{\hfill\bfseries\fontsize{14pt}{16pt}\selectfont\MakeUppercase}
+\renewcommand{\cftaftertoctitle}{\hfill}
+\setlength{\cftbeforetoctitleskip}{0pt}
+\setlength{\cftaftertoctitleskip}{18pt}
+
+\makeatletter
+\newcommand{\ReportListTable}[4]{%
+    {\bfseries\fontsize{13pt}{14pt}\selectfont #1:\par}
+    \vspace{6pt}
+    \begingroup
+    \fontsize{12pt}{13pt}\selectfont
+    \renewcommand{\arraystretch}{1.5}
+    \def\ReportListPrefix{#3}%
+    \def\numberline##1{\ReportListPrefix~##1.\enspace}%
+    \def\contentsline##1##2##3##4{##2\dotfill & ##3\\\hline}%
+    \def\addvspace##1{}%
+    \def\select@language##1{}%
+    \makeatletter
+    \noindent
+    \begin{tabular}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.5cm\relax}|>{\centering\arraybackslash}p{2.6cm}|}
+        \hline
+        \multicolumn{1}{|c|}{\bfseries #2} & \bfseries Trang \\
+        \hline
+        \@input{\jobname.#4}%
+    \end{tabular}
+    \par
+    \let\contentsline\@gobblefour
+    \let\addvspace\@gobble
+    \let\select@language\@gobble
+    \@starttoc{#4}%
+    \makeatother
+    \endgroup
+}
+
+\newcommand{\CombinedLists}{%
+    \chapter*{\fontsize{13pt}{14pt}\selectfont DANH MỤC CÁC BẢNG, SƠ ĐỒ, HÌNH}
+    \addcontentsline{toc}{chapter}{DANH MỤC CÁC BẢNG, SƠ ĐỒ, HÌNH}
+    \ReportListTable{BẢNG}{Tên bảng}{Bảng}{lot}
+    \vspace{14pt}
+    \ReportListTable{SƠ ĐỒ}{Tên sơ đồ}{Sơ đồ}{los}
+    \vspace{14pt}
+    \ReportListTable{HÌNH}{Tên hình}{Hình}{lof}
+}
+\makeatother
+
+\newcommand{\BoGiaoDuc}{BỘ GIÁO DỤC VÀ ĐÀO TẠO}
+\newcommand{\TenTruong}{TRƯỜNG ĐẠI HỌC ĐẠI NAM}
+
+\newcommand{\TenSinhVien}{NHÓM A4}
+\newcommand{\MaSinhVien}{1771020145 / 1771020167 / 1771020177}
+\newcommand{\KhoaHoc}{17-09}
+\newcommand{\NhomTruong}{Trịnh Việt Đức}
+\newcommand{\HoVaTenDuc}{Trịnh Việt Đức}
+\newcommand{\DanhSachThanhVien}{%
+Nguyễn Quang Đạt -- 1771020145 -- 21/11/2005\\
+Trịnh Việt Đức -- 1771020167 -- 16/10/2005\\
+Lê Quang Dũng -- 1771020177 -- 20/04/2005}
+
+\newcommand{\TenBaoCao}{XÂY DỰNG AI VISION SERVICE CHO HỆ THỐNG SMART CAMPUS}
+\newcommand{\LoaiBaoCao}{BÁO CÁO BÀI TẬP LỚN}
+\newcommand{\Nganh}{CÔNG NGHỆ THÔNG TIN}
+\newcommand{\ChuyenNganh}{[CHUYÊN NGÀNH]}
+\newcommand{\HocPhan}{DỊCH VỤ KẾT NỐI VÀ CÔNG NGHỆ NỀN TẢNG}
+\newcommand{\MaNhom}{A4}
+
+\newcommand{\GiangVienHD}{ThS. Lê Thị Thùy Trang}
+
+\newcommand{\DiaDiem}{HÀ NỘI}
+\newcommand{\Nam}{2026}
+
+\newcommand{\LogoTruong}{images/logo-dai-nam.png}
+
+\newcommand{\UnnumberedChapter}[1]{
+    \chapter*{#1}
+    \addcontentsline{toc}{chapter}{#1}
+}
+
+\newcommand{\Nguon}[1]{%
+    \par\smallskip
+    {\centering\itshape Nguồn: #1\par}
+}
+
+\newcommand{\SodoCaption}[2]{%
+    \caption[#1]{#1\\[3pt]\textit{Nguồn: #2}}%
+}
+
+\newcommand{\DrawCoverBorder}{
+\AddToShipoutPictureBG*{
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=1pt]
+        ([xshift=1.2cm,yshift=-1.2cm]current page.north west)
+        rectangle
+        ([xshift=-1.2cm,yshift=1.2cm]current page.south east);
+\end{tikzpicture}
+}
+}

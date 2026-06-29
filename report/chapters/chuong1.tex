@@ -1,0 +1,242 @@
+\chapter{TỔNG QUAN BÀI TOÁN VÀ PHÂN TÍCH SERVICE BOUNDARY}
+
+\section{Giới thiệu Smart Campus Operations Platform}
+
+\subsection{Bối cảnh và động lực}
+
+Trong kỷ nguyên chuyển đổi số, các trường đại học trên thế giới đang hướng tới mô hình Smart Campus, nơi mọi hoạt động từ giám sát an ninh, quản lý ra vào, theo dõi môi trường đến thông báo sự cố đều được số hóa và tự động hóa. Một Smart Campus không chỉ đơn thuần là lắp đặt camera hay cảm biến, mà còn đòi hỏi một nền tảng phần mềm có khả năng tiếp nhận dữ liệu từ nhiều nguồn, xử lý thông minh và phản ứng kịp thời.
+
+Smart Campus Operations Platform được thiết kế như một hệ thống mô phỏng vận hành thông minh trong khuôn viên trường đại học. Nền tảng này tích hợp 7 service độc lập, mỗi service đảm nhận một vai trò chuyên biệt, phối hợp với nhau tạo thành một hệ thống hoàn chỉnh có khả năng trả lời các câu hỏi vận hành như:
+
+\begin{itemize}
+    \item Có người lạ xuất hiện trong khu vực cấm không?
+    \item Nhiệt độ, độ ẩm, chuyển động có vượt ngưỡng an toàn không?
+    \item Có lượt ra/vào bất thường ngoài giờ không?
+    \item Khi có sự kiện bất thường, hệ thống có gửi thông báo kịp thời không?
+    \item Có thống kê được số lượt truy cập, số cảnh báo, trạng thái cảm biến không?
+\end{itemize}
+
+\subsection{Kiến trúc Microservices và Event-Driven}
+
+Hệ thống được thiết kế theo kiến trúc Microservices kết hợp với kiến trúc hướng sự kiện (Event-Driven Architecture). Trong kiến trúc Microservices, thay vì xây dựng một khối nguyên khối, hệ thống được chia thành nhiều service nhỏ, độc lập. Mỗi service có cơ sở dữ liệu riêng hoặc cơ chế lưu trữ riêng, có thể phát triển và triển khai độc lập, giao tiếp với nhau qua REST API hoặc message queue.
+
+Kiến trúc hướng sự kiện bổ sung khả năng giao tiếp bất đồng bộ: khi một service phát hiện sự kiện, nó publish sự kiện đó lên message broker để các service khác subscribe và xử lý. Cách tiếp cận này giúp hệ thống lỏng lẻo về mặt phụ thuộc và dễ mở rộng.
+
+\subsection{Các service trong Product A}
+
+Toàn bộ Product A bao gồm 7 service:
+
+\begin{table}[H]
+\centering
+\caption{Các service trong Smart Campus Product A}
+\label{tab:services-product-a}
+\begin{tabular}{|p{2.2cm}|p{3.4cm}|p{4.1cm}|p{2.8cm}|}
+\hline
+\textbf{Mã nhóm} & \textbf{Tên service} & \textbf{Vai trò} & \textbf{Độ phức tạp} \\
+\hline
+A1 & IoT Ingestion & Tiếp nhận dữ liệu cảm biến & Trung bình \\
+\hline
+A2 & Camera Stream & Quản lý luồng camera & Trung bình - Khó \\
+\hline
+A3 & Access Gate & Kiểm soát ra/vào RFID & Trung bình \\
+\hline
+A4 & AI Vision & Phân tích ảnh bằng AI & Khó \\
+\hline
+A5 & Analytics & Tổng hợp thống kê & Khó \\
+\hline
+A6 & Core Business & Xử lý nghiệp vụ trung tâm & Khó nhất \\
+\hline
+A7 & Notification & Gửi thông báo đa kênh & Trung bình \\
+\hline
+\end{tabular}
+\Nguon{Tài liệu học phần FIT4110}
+\end{table}
+
+\section{Cơ sở lý thuyết và công nghệ}
+
+\subsection{YOLO - mô hình phát hiện đối tượng thời gian thực}
+
+YOLO là một trong những mô hình phát hiện đối tượng phổ biến nhất hiện nay, với cách tiếp cận "nhìn toàn bộ ảnh đúng một lần" để dự đoán đồng thời bounding box và class probability. Trong AI Vision Service, nhóm sử dụng YOLOv8n, phiên bản nhẹ nhất, phù hợp với môi trường học tập và demo nhưng vẫn giữ được độ chính xác chấp nhận được.
+
+\subsection{FastAPI - web framework hiện đại cho Python}
+
+FastAPI là web framework Python được xây dựng trên Starlette và Pydantic, nổi bật với hiệu năng cao, hỗ trợ type hints, sinh OpenAPI tự động và hỗ trợ async/await tốt. Đây là lựa chọn phù hợp cho service cần nhận request, tải ảnh từ URL và trả kết quả ngay.
+
+\subsection{Docker và Containerization}
+
+Docker đóng gói ứng dụng vào container, giúp mọi môi trường chạy được đồng nhất. Với bài tập lớn, Docker giúp thành viên trong nhóm và giảng viên có thể chạy service trong môi trường giống hệt nhau, chỉ bằng một lệnh `docker compose up`.
+
+\section{Service nhóm phụ trách - AI Vision Service}
+
+\subsection{Vai trò trong hệ thống}
+
+AI Vision Service đóng vai trò là AI Engine của toàn bộ nền tảng. Trong kiến trúc tổng thể, AI Vision nằm ở giữa chuỗi xử lý camera:
+
+\begin{itemize}
+    \item Phía trước: A2 - Camera Stream, nơi cung cấp ảnh đầu vào.
+    \item Phía sau: A6 - Core Business và A5 - Analytics, nơi tiêu thụ kết quả phân tích.
+\end{itemize}
+
+Nếu ví hệ thống Smart Campus như cơ thể con người, thì Camera Stream là "mắt", AI Vision là "não thị giác" và Core Business là "não trung tâm".
+
+\subsection{Mục tiêu cụ thể}
+
+\begin{enumerate}
+    \item Nhận ảnh từ Camera Stream qua REST API.
+    \item Tải và giải mã ảnh bằng `httpx` và OpenCV.
+    \item Chạy YOLOv8n để phát hiện đối tượng trong ảnh.
+    \item Fallback sang mock AI khi model không khả dụng.
+    \item Chuẩn hóa mọi kết quả về cùng một JSON schema.
+    \item Cung cấp adapter cho Core Business.
+    \item Cung cấp detection log cho Analytics.
+\end{enumerate}
+
+\section{Phạm vi chức năng}
+
+\subsection{Các chức năng nằm trong phạm vi}
+
+\begin{itemize}
+    \item REST API đầy đủ với 7 endpoint.
+    \item Xử lý ảnh từ URL, giải mã bằng OpenCV, chạy YOLOv8n inference.
+    \item Fallback mock AI tự động khi model thật không khả dụng.
+    \item Phân loại rủi ro theo 3 mức low, medium, high.
+    \item Lưu trữ kết quả tạm bằng in-memory dictionary.
+    \item Dashboard web dark theme để test API nhanh.
+    \item Adapter cho Core Business.
+    \item OpenAPI 3.1.0.
+    \item Docker và Docker Compose.
+    \item Postman Collection và smoke test.
+    \item Minh chứng vận hành qua log, healthcheck, model status và screenshot.
+\end{itemize}
+
+\subsection{Giới hạn của hệ thống}
+
+\begin{itemize}
+    \item Chưa huấn luyện mô hình mới, chỉ dùng YOLOv8n pretrained trên COCO.
+    \item Chỉ xử lý ảnh tĩnh theo frame, không xử lý video stream liên tục.
+    \item Chưa nhận diện danh tính cụ thể, chỉ phát hiện "person" hoặc object.
+    \item Ảnh không được lưu lâu dài.
+    \item Dashboard chỉ phục vụ demo, chưa phải UI production.
+    \item Chưa có authentication/authorization trong phạm vi học phần.
+\end{itemize}
+
+\section{Input và Output của service}
+
+\subsection{Dữ liệu đầu vào}
+
+AI Vision Service nhận request từ Camera Stream với schema `VisionDetectRequest`:
+
+\begin{table}[H]
+\centering
+\caption{VisionDetectRequest - schema đầu vào}
+\label{tab:vision-request}
+\begin{tabular}{|p{3cm}|p{3cm}|p{2.5cm}|p{5cm}|}
+\hline
+\textbf{Trường} & \textbf{Kiểu dữ liệu} & \textbf{Bắt buộc} & \textbf{Mô tả} \\
+\hline
+camera_id & string & Có & Mã định danh camera. \\
+\hline
+frame_url & string(URL) & Có & URL của ảnh cần phân tích, hỗ trợ alias `image_url`. \\
+\hline
+timestamp & datetime & Có & Thời điểm camera ghi nhận frame. \\
+\hline
+\end{tabular}
+\Nguon{Nhóm thực hiện}
+\end{table}
+
+\subsection{Dữ liệu đầu ra}
+
+\begin{table}[H]
+\centering
+\caption{DetectionResult - schema đầu ra}
+\label{tab:detection-result}
+\begin{tabular}{|p{3cm}|p{3cm}|p{9cm}|}
+\hline
+\textbf{Trường} & \textbf{Kiểu} & \textbf{Ý nghĩa} \\
+\hline
+detection_id & string & Mã duy nhất của detection. \\
+\hline
+camera_id & string & Mã camera từ request. \\
+\hline
+frame_url & string & URL ảnh đã phân tích. \\
+\hline
+timestamp & datetime & Thời điểm phân tích (UTC). \\
+\hline
+anomaly_detected & boolean & Có phát hiện bất thường hay không. \\
+\hline
+confidence_score & float/null & Độ tin cậy, chỉ có khi anomaly_detected = true. \\
+\hline
+finding & object/null & Chi tiết đối tượng phát hiện. \\
+\hline
+model_mode & string & `yolo` hoặc `mock-ai`. \\
+\hline
+notes & string/null & Ghi chú bổ sung. \\
+\hline
+\end{tabular}
+\Nguon{Nhóm thực hiện}
+\end{table}
+
+\section{Upstream và Downstream}
+
+\subsection{Quan hệ Provider - Consumer}
+
+AI Vision Service vừa là Consumer của A2 - Camera Stream, vừa là Provider cho A6 - Core Business và A5 - Analytics.
+
+\subsection{Dịch vụ upstream}
+
+A2 - Camera Stream là bên gọi chính vào AI Vision. Khi phát hiện chuyển động, Camera Stream tạo `frame_url` và gọi `POST /api/v1/vision/detect`.
+
+\subsection{Dịch vụ downstream}
+
+A6 - Core Business nhận kết quả phát hiện qua adapter endpoint `POST /api/v1/events/camera` để áp dụng rule nghiệp vụ. A5 - Analytics nhận detection log để tổng hợp thống kê.
+
+\section{Sơ đồ Service Boundary}
+
+\begin{sodo}[H]
+    \centering
+    \fbox{\parbox[c][5.5cm][c]{0.85\textwidth}{\centering
+    A2 Camera Stream (Provider)\\
+    $\downarrow$\\
+    A4 - AI Vision Service\\
+    Input: `frame_url`\\
+    Xử lý: YOLOv8n / Mock AI\\
+    Output: `DetectionResult`\\
+    Adapter: `CoreCameraEvent`\\
+    $\downarrow$\\
+    A6 Core Business, A5 Analytics (Consumers)}}
+    \SodoCaption{Sơ đồ Service Boundary của AI Vision Service trong Product A}{Nhóm thực hiện}
+    \label{fig:service-boundary}
+\end{sodo}
+
+\section{Sơ đồ Use-case}
+
+\begin{sodo}[H]
+    \centering
+    \fbox{\parbox[c][5cm][c]{0.82\textwidth}{\centering
+    Camera Stream (A2): phân tích ảnh\\
+    Admin/DevOps: kiểm tra sức khỏe service\\
+    Core Business (A6): tạo camera event\\
+    AI Vision Service: xử lý ảnh và trả kết quả}}
+    \SodoCaption{Sơ đồ Use-case của AI Vision Service}{Nhóm thực hiện}
+    \label{fig:use-case}
+\end{sodo}
+
+\section{Sơ đồ Deployment}
+
+\begin{sodo}[H]
+    \centering
+    \fbox{\parbox[c][5.5cm][c]{0.82\textwidth}{\centering
+    Host Machine (Windows/Linux)\\
+    Docker Engine\\
+    Container: ai-vision-service\\
+    Uvicorn ASGI Server\\
+    FastAPI Application\\
+    YOLOv8n Model\\
+    HTTP Client / Browser / Postman}}
+    \SodoCaption{Sơ đồ Deployment - kiến trúc Docker của AI Vision Service}{Nhóm thực hiện}
+    \label{fig:deployment}
+\end{sodo}
+
+\section{Kết luận chương}
+
+Chương này đã trình bày bối cảnh Smart Campus Operations Platform, cơ sở lý thuyết về YOLOv8, FastAPI, Docker và kiến trúc Microservices; vai trò của AI Vision Service như "não thị giác" của hệ thống; phạm vi chức năng, input/output, quan hệ provider-consumer và các sơ đồ boundary, use-case, deployment.

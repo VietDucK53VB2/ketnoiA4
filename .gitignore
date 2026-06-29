@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+.idea/
+.vscode/
+report/pages/
+report/*.txt
+report/_*.pdf
+output/
+template_bctt_datn/
+*.log

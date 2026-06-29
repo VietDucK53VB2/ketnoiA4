@@ -1,0 +1,21 @@
+\UnnumberedChapter{LỜI MỞ ĐẦU}
+
+Trong các hệ thống giám sát thông minh, nhu cầu tự động phát hiện sự kiện từ camera ngày càng trở nên quan trọng. Thay vì chỉ lưu trữ hình ảnh thô, hệ thống cần có khả năng phân tích frame theo thời gian thực, nhận diện đối tượng và trả kết quả đủ rõ ràng để các dịch vụ nghiệp vụ khác có thể sử dụng tiếp. Đề tài AI Vision Service được xây dựng như một dịch vụ phân tích hình ảnh trong Smart Campus Operations Platform, trong đó service nhận dữ liệu frame từ Camera Stream, chạy mô hình YOLOv8n hoặc chế độ mock dự phòng, rồi trả về kết quả phát hiện dưới dạng JSON chuẩn hóa để các dịch vụ Camera Stream, Core Business và Analytics có thể dùng tiếp; báo cáo này trình bày tổng quan bài toán, yêu cầu hệ thống, kiến trúc triển khai, các API chính, cơ chế fallback mock AI, cách tích hợp với các dịch vụ khác và kết quả kiểm thử thực tế.
+
+\begin{table}[H]
+\centering
+\caption{Danh sách thành viên nhóm thực hiện}
+\label{tab:members}
+\begin{tabular}{|c|p{5.5cm}|p{4cm}|}
+\hline
+\textbf{STT} & \textbf{Họ và tên} & \textbf{Mã sinh viên} \\
+\hline
+1 & Nguyễn Quang Đạt & 1771020145 \\
+\hline
+2 & Trịnh Việt Đức & 1771020167 \\
+\hline
+3 & Lê Quang Dũng & 1771020177 \\
+\hline
+\end{tabular}
+\Nguon{Nhóm thực hiện}
+\end{table}

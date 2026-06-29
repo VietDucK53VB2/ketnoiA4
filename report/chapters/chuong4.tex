@@ -1,0 +1,283 @@
+\chapter{TÍCH HỢP VÀ KẾT NỐI LIÊN SERVICE}
+
+\section{Tổng quan về tích hợp trong Product A}
+
+Một trong những yêu cầu quan trọng nhất của bài tập lớn là service không được tồn tại một mình. Mỗi service phải chứng minh được khả năng kết nối với ít nhất một service khác trong cùng Product. Đối với AI Vision Service, nhóm đã thiết lập kết nối với 3 service khác:
+
+\begin{itemize}
+    \item A2 - Camera Stream: kết nối đầu vào, AI Vision nhận ảnh từ Camera Stream.
+    \item A6 - Core Business: kết nối đầu ra chính, AI Vision cung cấp kết quả phát hiện cho Core Business.
+    \item A5 - Analytics: kết nối đầu ra phụ, AI Vision cung cấp detection log cho Analytics.
+\end{itemize}
+
+\section{Mô hình tích hợp}
+
+\subsection{Phân biệt đồng bộ và bất đồng bộ}
+
+\begin{table}[H]
+\centering
+\caption{So sánh giao tiếp đồng bộ và bất đồng bộ}
+\label{tab:sync-async}
+\begin{tabular}{|p{3cm}|p{5cm}|p{5cm}|}
+\hline
+\textbf{Tiêu chí} & \textbf{Đồng bộ (REST API)} & \textbf{Bất đồng bộ (Message Queue)} \\
+\hline
+Cơ chế & Request -> Response & Publish -> Subscribe \\
+\hline
+Độ trễ & Thấp, real-time & Có thể cao hơn \\
+\hline
+Coupling & Tight, caller chờ callee & Loose, decoupled \\
+\hline
+Độ tin cậy & Request fail nếu callee chết & Message có thể được lưu trong queue \\
+\hline
+Phù hợp & Cần kết quả ngay & Xử lý nền, broadcasting \\
+\hline
+\end{tabular}
+\Nguon{Nhóm thực hiện}
+\end{table}
+
+AI Vision Service sử dụng REST API làm phương thức giao tiếp chính vì Camera Stream cần biết kết quả ngay để quyết định có gửi tiếp sang Core Business hay không.
+
+\section{Kết nối A2 (Camera Stream) -> A4 (AI Vision)}
+
+\subsection{Mô tả luồng kết nối}
+
+\begin{enumerate}
+    \item Camera IP liên tục ghi hình và gửi frame đến Camera Stream Service (A2).
+    \item Camera Stream chạy motion detection. Khi phát hiện có chuyển động, nó tạo `frame_url` và gọi `POST /api/v1/vision/detect`.
+    \item AI Vision tải ảnh, phân tích và trả về `DetectionResult`.
+    \item Camera Stream nhận kết quả và quyết định bước tiếp theo.
+\end{enumerate}
+
+\subsection{Hợp đồng API}
+
+\begin{itemize}
+    \item Endpoint: `POST /api/v1/vision/detect`
+    \item Method: POST
+    \item Content-Type: application/json
+    \item Request: `VisionDetectRequest`
+    \item Response 200: `DetectionResult`
+    \item Response 422: `ProblemDetails` khi `frame_url` không hợp lệ hoặc không tải được
+\end{itemize}
+
+\subsection{Phân tích độ tin cậy}
+
+\begin{itemize}
+    \item Timeout: `httpx` client có timeout 15 giây.
+    \item Retry: hiện chưa có cơ chế retry ở tầng API.
+    \item Idempotency: mỗi request tạo một `detection_id` mới, request giống hệt nhau gửi 2 lần vẫn tạo 2 detection khác nhau.
+\end{itemize}
+
+\section{Kết nối A4 (AI Vision) -> A6 (Core Business)}
+
+\subsection{Vai trò của Core Business}
+
+Core Business là "não trung tâm" của toàn bộ Product A. Nó nhận dữ liệu từ nhiều nguồn, áp dụng rule nghiệp vụ và ra quyết định. AI Vision cung cấp "mảnh ghép camera" cho Core Business.
+
+\subsection{Adapter Pattern}
+
+Nhóm implement Adapter Pattern để chuyển `DetectionResult` sang `CoreCameraEvent`.
+
+\begin{table}[H]
+\centering
+\caption{Mapping giữa AI Vision và Core Business}
+\label{tab:ai-core-mapping}
+\begin{tabular}{|p{4cm}|p{4cm}|p{5cm}|}
+\hline
+\textbf{AI Vision} & \textbf{Core Business} & \textbf{Ghi chú} \\
+\hline
+detection_id & event_id & Giữ nguyên \\
+\hline
+anomaly_detected & motion_detected & Boolean tương đương \\
+\hline
+confidence_score & motion_score & Float 0-1 \\
+\hline
+finding(person, conf $\geq$ 0.6) & unknown_person=true & Phát hiện người lạ \\
+\hline
+risk_level(low/medium/high) & risk_level(normal/warning/critical) & Map 3 mức sang 3 mức \\
+\hline
+\end{tabular}
+\Nguon{Nhóm thực hiện}
+\end{table}
+
+\subsection{Logic tự động ra quyết định}
+
+AI Vision không chỉ trả về kết quả phân tích mà còn tự động đề xuất quyết định `core_decision`. Điều này giúp Core Business không cần implement lại logic phân tích.
+
+\begin{table}[H]
+\centering
+\caption{Matrận quyết định của AI Vision}
+\label{tab:decision-matrix}
+\begin{tabular}{|p{4.2cm}|p{2.2cm}|p{3.2cm}|p{4.6cm}|}
+\hline
+\textbf{Kịch bản} & \textbf{risk\_level} & \textbf{core\_decision} & \textbf{reason} \\
+\hline
+Không phát hiện gì & normal & no\_alert & no\_anomaly\_detected \\
+\hline
+Phát hiện người, conf $< 0.6$ & normal & no\_alert & low\_confidence\_person \\
+\hline
+Phát hiện người, conf $\geq 0.6$ & warning & alert\_required & unknown\_person\_detected \\
+\hline
+Phát hiện đối tượng, conf $< 0.85$ & warning & alert\_required & object\_detected \\
+\hline
+Phát hiện đối tượng, conf $\geq 0.85$ & critical & alert\_required & object\_detected\_high\_conf \\
+\hline
+\end{tabular}
+\Nguon{Nhóm thực hiện}
+\end{table}
+
+\section{Kết nối A4 (AI Vision) -> A5 (Analytics)}
+
+\subsection{Vai trò của Analytics}
+
+Analytics tổng hợp dữ liệu từ nhiều nguồn để tạo báo cáo thống kê. AI Vision cung cấp detection log để Analytics phân tích theo camera, theo thời gian, theo loại đối tượng, theo mức rủi ro và theo model mode.
+
+\subsection{Hợp đồng dữ liệu}
+
+Các trường dữ liệu AI Vision cung cấp cho Analytics gồm:
+
+\begin{itemize}
+    \item `detection_id`
+    \item `camera_id`
+    \item `timestamp`
+    \item `anomaly_detected`
+    \item `confidence_score`
+    \item `finding.object_name`
+    \item `finding.risk_level`
+    \item `model_mode`
+\end{itemize}
+
+\section{Luồng xử lý End-to-End}
+
+\begin{sodo}[H]
+    \centering
+    \fbox{\parbox[c][5.2cm][c]{0.82\textwidth}{\centering
+    Camera IP $\rightarrow$ A2 Camera Stream $\rightarrow$ A4 AI Vision $\rightarrow$ A6 Core Business $\rightarrow$ A7 Notification\\
+    Song song: A5 Analytics thu thập detection log, camera event log và decision log}}
+    \SodoCaption{Luồng xử lý End-to-End trong Smart Campus Product A}{Nhóm thực hiện}
+    \label{fig:end-to-end}
+\end{sodo}
+
+\section{Tự đánh giá theo Rubric học phần}
+
+\begin{table}[H]
+\centering
+\caption{Tự đánh giá chi tiết theo Rubric}
+\label{tab:rubric}
+\begin{tabular}{|p{3.8cm}|p{1.8cm}|p{2.2cm}|p{5.8cm}|}
+\hline
+\textbf{Tiêu chí} & \textbf{Trọng số} & \textbf{Mức đạt} & \textbf{Minh chứng} \\
+\hline
+Service Boundary & 10\% & Tốt & Sơ đồ rõ, input/output/upstream/downstream đầy đủ \\
+\hline
+OpenAPI Contract & 20\% & Tốt & `openapi.yaml`, schema, example, error model, Swagger UI \\
+\hline
+Testing & 15\% & Đạt & Postman 7 test case + smoke test, happy path, negative, error \\
+\hline
+Docker/Compose & 20\% & Tốt & Dockerfile + compose, chạy từ repo sạch, healthcheck \\
+\hline
+Integration & 20\% & Đạt & Kết nối A2, adapter cho A6, hợp đồng với A5 \\
+\hline
+Trình bày & 15\% & Tốt & `PRESENTATION.md`, kịch bản 1 phút, thứ tự demo rõ ràng \\
+\hline
+\end{tabular}
+\Nguon{Nhóm thực hiện}
+\end{table}
+
+\section{Phân công công việc}
+
+\begin{table}[H]
+\centering
+\caption{Phân công công việc nhóm A4}
+\label{tab:assignment}
+\begin{tabular}{|p{4cm}|p{3.2cm}|p{5.5cm}|p{1.8cm}|}
+\hline
+\textbf{Thành viên} & \textbf{Vai trò} & \textbf{Nhiệm vụ chính} & \textbf{Tỷ trọng} \\
+\hline
+\textbf{Trịnh Việt Đức} & Nhóm trưởng / Backend Lead & Điều phối nhóm, thiết kế kiến trúc, phát triển `main.py`, `vision.py`, xử lý ảnh, YOLO integration, làm việc với A2/A6/A5, tổng hợp nội dung báo cáo & 50\% \\
+\hline
+\textbf{Nguyễn Quang Đạt} & API/Contract Owner & Viết `openapi.yaml`, Postman collection, smoke test, tài liệu API, hỗ trợ kiểm thử hợp đồng và minh chứng chạy thử & 25\% \\
+\hline
+\textbf{Lê Quang Dũng} & DevOps / Report & Docker, docker-compose, minh chứng vận hành, hỗ trợ tổng hợp báo cáo, phụ lục và kiểm tra bản dựng & 25\% \\
+\hline
+\end{tabular}
+\Nguon{Nhóm thực hiện}
+\end{table}
+
+\subsection{Chữ ký xác nhận}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{5cm}|p{5cm}|p{5cm}|}
+\hline
+\centering\textbf{Nguyễn Quang Đạt} & \centering\textbf{Trịnh Việt Đức} & \centering\textbf{Lê Quang Dũng} \\
+\hline
+\vspace{2.2cm} & \vspace{2.2cm} & \vspace{2.2cm} \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Hạn chế và hướng phát triển}
+
+\subsection{Các điểm hạn chế hiện tại}
+
+\begin{itemize}
+    \item `DETECTION_STORE` là Python dict trong RAM, mất toàn bộ dữ liệu khi restart.
+    \item Giao tiếp hiện tại hoàn toàn đồng bộ qua REST API.
+    \item YOLOv8n nhanh nhưng chưa mạnh ở các bài toán phức tạp.
+    \item Chưa có xác thực, endpoint đang công khai.
+    \item Dashboard còn đơn giản, chưa có real-time update.
+\end{itemize}
+
+\subsection{Hướng phát triển trong tương lai}
+
+\begin{enumerate}
+    \item Thay in-memory dict bằng PostgreSQL hoặc Redis.
+    \item Tích hợp RabbitMQ hoặc Kafka cho giao tiếp bất đồng bộ.
+    \item Nâng cấp AI lên YOLOv11 hoặc mô hình lớn hơn.
+    \item Tích hợp nhận diện khuôn mặt.
+    \item Thêm API key hoặc JWT authentication.
+    \item Xây dashboard real-time bằng WebSocket.
+    \item Chuyển sang Kubernetes.
+    \item Thiết lập CI/CD bằng GitHub Actions.
+\end{enumerate}
+
+\section{Bảo mật và lưu trữ dữ liệu}
+
+\subsection{Hiện trạng}
+
+Hai hạn chế chính hiện tại là lưu trữ không bền vững và chưa có xác thực.
+
+\subsection{Giải pháp đề xuất}
+
+\begin{enumerate}
+    \item Thay thế in-memory store bằng PostgreSQL.
+    \item Thêm JWT authentication.
+    \item Sử dụng API key cho service-to-service.
+\end{enumerate}
+
+\begin{table}[H]
+\centering
+\caption{So sánh phương án lưu trữ và xác thực}
+\label{tab:security-options}
+\begin{tabular}{|p{3cm}|p{3.2cm}|p{3.2cm}|p{3.2cm}|}
+\hline
+\textbf{Tiêu chí} & \textbf{Hiện tại} & \textbf{PostgreSQL + JWT} & \textbf{Redis + API Key} \\
+\hline
+Lưu trữ & In-memory & Bền vững & Bền vững \\
+\hline
+Tốc độ & Nhanh nhất & Trung bình & Nhanh \\
+\hline
+Phức tạp & Đơn giản nhất & Trung bình & Đơn giản \\
+\hline
+Xác thực & Không có & JWT & API Key \\
+\hline
+Phù hợp & Demo & Production & Production nhẹ \\
+\hline
+\end{tabular}
+\Nguon{Nhóm thực hiện}
+\end{table}
+
+\section{Kết luận chương}
+
+Chương này đã trình bày kết nối của AI Vision với A2, A6, A5, mô hình tích hợp, adapter pattern, matrận quyết định, luồng end-to-end, tự đánh giá theo rubric, phân công công việc, hạn chế và hướng phát triển.

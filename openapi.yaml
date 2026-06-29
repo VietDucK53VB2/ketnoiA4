@@ -1,0 +1,370 @@
+openapi: 3.1.0
+info:
+  title: AI Vision Service
+  description: Service xu ly anh camera bang AI that hoac mo phong.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Local development
+  - url: http://26.64.81.15:8000
+    description: Radmin VPN demo host example
+paths:
+  /:
+    get:
+      summary: Dashboard
+      operationId: dashboard__get
+      responses:
+        "200":
+          description: HTML dashboard
+          content:
+            text/html:
+              schema:
+                type: string
+  /health:
+    get:
+      summary: Health
+      operationId: health_health_get
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  service:
+                    type: string
+                    example: ai-vision-service
+  /info:
+    get:
+      summary: Info
+      operationId: info_info_get
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /model:
+    get:
+      summary: Model
+      operationId: model_model_get
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  model_name:
+                    type: string
+                    example: yolov8n.pt
+                  ultralytics_available:
+                    type: boolean
+                    example: true
+                  loaded:
+                    type: boolean
+                    example: true
+                  mode:
+                    type: string
+                    example: yolo
+  /api/v1/vision/detect:
+    post:
+      summary: Detect Vision Finding
+      operationId: vision_detect_api_v1_vision_detect_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VisionDetectRequest"
+            examples:
+              sample:
+                value:
+                  camera_id: cam-gate-01
+                  frame_url: https://www.ultralytics.com/images/bus.jpg
+                  timestamp: "2026-05-02T09:10:00"
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DetectionResult"
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetails"
+  /api/v1/vision/detections/{detectionId}:
+    get:
+      summary: Get Detection By ID
+      operationId: get_detection_api_v1_vision_detections_detectionId_get
+      parameters:
+        - name: detectionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DetectionResult"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetails"
+  /analyze:
+    post:
+      summary: Analyze
+      operationId: analyze_analyze_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CameraFrameIn"
+            examples:
+              sample:
+                value:
+                  camera_id: cam-gate-01
+                  image_url: https://www.ultralytics.com/images/bus.jpg
+                  timestamp: "2026-05-02T09:10:00"
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DetectionOut"
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+  /analyze/mock:
+    post:
+      summary: Analyze Mock
+      operationId: analyze_mock_analyze_mock_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CameraFrameIn"
+            examples:
+              sample:
+                value:
+                  camera_id: cam-gate-01
+                  image_url: https://www.ultralytics.com/images/bus.jpg
+                  timestamp: "2026-05-02T09:10:00"
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DetectionOut"
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+components:
+  schemas:
+    VisionDetectRequest:
+      type: object
+      required:
+        - camera_id
+        - frame_url
+        - timestamp
+      properties:
+        camera_id:
+          type: string
+          example: cam-gate-01
+        frame_url:
+          type: string
+          format: uri
+          example: http://example.com/frame.jpg
+        timestamp:
+          type: string
+          format: date-time
+          example: "2026-05-02T09:10:00"
+    ProblemDetails:
+      type: object
+      required:
+        - title
+        - status
+        - detail
+      properties:
+        type:
+          type: string
+          example: about:blank
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+    CameraFrameIn:
+      type: object
+      required:
+        - camera_id
+        - image_url
+        - timestamp
+      properties:
+        camera_id:
+          type: string
+          example: cam-gate-01
+        image_url:
+          type: string
+          format: uri
+          example: http://example.com/frame.jpg
+        timestamp:
+          type: string
+          format: date-time
+          example: "2026-05-02T09:10:00"
+    DetectionOut:
+      type: object
+      required:
+        - detected
+        - object
+        - confidence
+        - risk_level
+        - camera_id
+        - timestamp
+        - model_mode
+      properties:
+        detected:
+          type: boolean
+        object:
+          type: string
+        confidence:
+          type: number
+        risk_level:
+          type: string
+        camera_id:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        model_mode:
+          type: string
+        notes:
+          oneOf:
+            - type: string
+            - type: "null"
+    PersonFinding:
+      type: object
+      required:
+        - finding_type
+        - object_name
+        - risk_level
+      properties:
+        finding_type:
+          type: string
+          enum: [person]
+        object_name:
+          type: string
+          enum: [person]
+        risk_level:
+          type: string
+          enum: [low, medium, high]
+        description:
+          type: string
+          nullable: true
+    ObjectFinding:
+      type: object
+      required:
+        - finding_type
+        - object_name
+        - risk_level
+      properties:
+        finding_type:
+          type: string
+          enum: [object]
+        object_name:
+          type: string
+        risk_level:
+          type: string
+          enum: [low, medium, high]
+        description:
+          type: string
+          nullable: true
+    DetectionResult:
+      type: object
+      required:
+        - detection_id
+        - camera_id
+        - frame_url
+        - timestamp
+        - anomaly_detected
+        - model_mode
+      properties:
+        detection_id:
+          type: string
+        camera_id:
+          type: string
+        frame_url:
+          type: string
+          format: uri
+        timestamp:
+          type: string
+          format: date-time
+        anomaly_detected:
+          type: boolean
+        confidence_score:
+          oneOf:
+            - type: number
+            - type: "null"
+        finding:
+          oneOf:
+            - $ref: "#/components/schemas/PersonFinding"
+            - $ref: "#/components/schemas/ObjectFinding"
+            - type: "null"
+        model_mode:
+          type: string
+        notes:
+          oneOf:
+            - type: string
+            - type: "null"
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: "#/components/schemas/ValidationError"
+    ValidationError:
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      properties:
+        loc:
+          type: array
+          items:
+            oneOf:
+              - type: string
+              - type: integer
+        msg:
+          type: string
+        type:
+          type: string

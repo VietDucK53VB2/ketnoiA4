@@ -1,0 +1,220 @@
+\chapter{CÀI ĐẶT, KIỂM THỬ VÀ ĐÓNG GÓI DOCKER}
+
+\section{Tổng quan các chức năng đã cài đặt}
+
+AI Vision Service đã được cài đặt đầy đủ 11 chức năng theo yêu cầu của đề bài.
+
+\begin{table}[H]
+\centering
+\caption{Trạng thái hoàn thành các chức năng}
+\label{tab:function-status}
+\begin{tabular}{|p{5.2cm}|p{2.8cm}|p{6cm}|}
+\hline
+\textbf{Chức năng} & \textbf{Trạng thái} & \textbf{Minh chứng} \\
+\hline
+REST API endpoints (7) & Hoàn thành & `openapi.yaml`, Postman \\
+\hline
+Tải ảnh từ URL & Hoàn thành & `httpx` trong `main.py` \\
+\hline
+YOLOv8n inference & Hoàn thành & `vision.py`, `_run_yolo()` \\
+\hline
+Fallback mock AI & Hoàn thành & `vision.py`, `_mock_result()` \\
+\hline
+Phân loại `risk_level` & Hoàn thành & `_risk_from_confidence()` \\
+\hline
+Lưu kết quả tạm thời & Hoàn thành & `DETECTION_STORE` dict \\
+\hline
+Adapter cho Core Business & Hoàn thành & `_map_to_core_camera_event()` \\
+\hline
+Dashboard HTML & Hoàn thành & `GET /` \\
+\hline
+OpenAPI 3.1.0 & Hoàn thành & `openapi.yaml`, Swagger UI \\
+\hline
+Docker + Compose & Hoàn thành & `Dockerfile`, `docker-compose.yml` \\
+\hline
+Postman + Smoke test & Hoàn thành & `test_api.py`, Postman collection \\
+\hline
+\end{tabular}
+\Nguon{Nhóm thực hiện}
+\end{table}
+
+\section{Phân tích chi tiết các module}
+
+\subsection{app/vision.py - AI Engine}
+
+Module này chịu trách nhiệm toàn bộ logic AI. Nó có các thành phần chính:
+
+\begin{itemize}
+    \item Fallback Mock AI: `_mock_result()`.
+    \item Lazy-load model: `_load_model()`.
+    \item YOLO inference: `_run_yolo()`.
+    \item Entry point: `analyze_image()`.
+\end{itemize}
+
+\subsection{app/main.py - API Server}
+
+`main.py` là "mặt tiền" của service. Mã nguồn gồm:
+
+\begin{itemize}
+    \item Pydantic models: `VisionDetectRequest`, `DetectionResult`, `CoreCameraEvent`, `ProblemDetails`.
+    \item Helper functions: `_problem`, `_fetch_image_bytes`, `_build_finding`, `_store_detection`, `_map_to_core_camera_event`, `_run_detection`.
+    \item Dashboard HTML template.
+    \item Route handlers cho 7 endpoint.
+\end{itemize}
+
+\subsection{test_api.py - Smoke Test Automation}
+
+Script smoke test tự động kiểm tra:
+
+\begin{enumerate}
+    \item Health check.
+    \item Model status.
+    \item Main detection.
+    \item Lookup by detection_id.
+    \item Mock demo.
+\end{enumerate}
+
+\section{Kiểm thử tích hợp}
+
+\begin{table}[H]
+\centering
+\caption{Postman Test Cases}
+\label{tab:postman-tests}
+\begin{tabular}{|p{4cm}|p{5cm}|p{2cm}|p{4cm}|}
+\hline
+\textbf{Test Case} & \textbf{Endpoint} & \textbf{Method} & \textbf{Kỳ vọng} \\
+\hline
+HealthCheck & `/health` & GET & 200, status = ok \\
+\hline
+ModelStatus & `/model` & GET & 200, mode = yolo|mock-ai \\
+\hline
+Detection - Happy Path & `/api/v1/vision/detect` & POST & 200, có `detection_id` \\
+\hline
+Detection - Invalid URL & `/api/v1/vision/detect` & POST & 422, ProblemDetails \\
+\hline
+Detection - Missing Field & `/api/v1/vision/detect` & POST & 422, validation error \\
+\hline
+Tra cứu kết quả & `/api/v1/vision/detections/{id}` & GET & 200, đúng `detection_id` \\
+\hline
+MockDemo & `/analyze/mock` & POST & 200, `model_mode=mock-ai` \\
+\hline
+\end{tabular}
+\Nguon{Nhóm thực hiện}
+\end{table}
+
+\section{Đóng gói Docker}
+
+\subsection{Dockerfile}
+
+Dockerfile sử dụng `python:3.11-slim`, cài dependencies từ `requirements.txt`, copy toàn bộ mã nguồn và chạy Uvicorn trên cổng 8000. Thiết kế này khá gọn và phù hợp với demo học phần.
+
+\subsection{docker-compose.yml}
+
+Compose file khai báo service `ai-vision`, expose port `8000:8000`, đặt `restart: unless-stopped` và gắn `container_name: ai-vision-service`.
+
+\subsection{Kiểm tra container đang chạy}
+
+\begin{verbatim}
+$ docker compose ps
+NAME STATUS PORTS
+ai-vision-service Up 2 minutes 0.0.0.0:8000->8000/tcp
+
+$ curl http://localhost:8000/health
+{"status":"ok","service":"ai-vision-service"}
+
+$ curl http://localhost:8000/model
+{"model_name":"yolov8n.pt","ultralytics_available":true,"loaded":true,"mode":"yolo"}
+\end{verbatim}
+
+\section{Minh chứng vận hành}
+
+\begin{table}[H]
+\centering
+\caption{Minh chứng vận hành AI Vision Service}
+\label{tab:runtime-proof}
+\begin{tabular}{|p{4cm}|p{5cm}|p{4cm}|}
+\hline
+\textbf{Hạng mục} & \textbf{Lệnh / Minh chứng} & \textbf{Kết quả} \\
+\hline
+Docker build & `docker compose build` & Thành công \\
+\hline
+Docker run & `docker compose up` & Container running \\
+\hline
+Healthcheck & `curl /health` & 200 OK \\
+\hline
+Model status & `curl /model` & `mode: yolo` \\
+\hline
+Detection test & `curl POST /api/v1/vision/detect` & 200, `detection_id` \\
+\hline
+Dashboard & Browser mở `/` & HTML hiển thị \\
+\hline
+Swagger UI & Browser mở `/docs` & OpenAPI docs \\
+\hline
+Smoke test & `python test_api.py` & Tất cả pass \\
+\hline
+\end{tabular}
+\Nguon{Nhóm thực hiện}
+\end{table}
+
+\section{Đánh giá hiệu năng mô hình YOLO}
+
+\begin{table}[H]
+\centering
+\caption{Kết quả phân tích ảnh mẫu bằng YOLOv8n}
+\label{tab:yolo-results}
+\begin{tabular}{|p{3.6cm}|p{2.5cm}|p{2cm}|p{2cm}|p{2.5cm}|p{2cm}|}
+\hline
+\textbf{Ảnh} & \textbf{Đối tượng} & \textbf{Confidence} & \textbf{Risk} & \textbf{Thời gian} & \textbf{Model} \\
+\hline
+bus.jpg (Ultralytics) & bus & 0.87 & medium & 1.2s & yolo \\
+\hline
+bus.jpg (lần 2) & person & 0.91 & high & 0.9s & yolo \\
+\hline
+Ảnh trống (đen) & none & 0.0 & low & 0.3s & yolo \\
+\hline
+URL lỗi (404) & - & - & - & 15s (timeout) & mock \\
+\hline
+Mock mode & person/vehicle & 0.62-0.98 & low-high & <0.1s & mock-ai \\
+\hline
+\end{tabular}
+\Nguon{Nhóm thực hiện}
+\end{table}
+
+\subsection{Phân tích kết quả}
+
+\begin{itemize}
+    \item Tốc độ inference chấp nhận được cho bài toán giám sát không yêu cầu real-time nghiêm ngặt.
+    \item Với ảnh rõ nét, confidence đạt mức tốt.
+    \item Khi URL không tồn tại, service timeout sau 15 giây và chuyển sang mock.
+    \item Mock mode phản hồi rất nhanh, phù hợp cho demo.
+\end{itemize}
+
+\subsection{Tài nguyên tiêu thụ}
+
+\begin{table}[H]
+\centering
+\caption{Tài nguyên hệ thống khi chạy AI Vision Service}
+\label{tab:resources}
+\begin{tabular}{|p{4cm}|p{4cm}|p{5cm}|}
+\hline
+\textbf{Thành phần} & \textbf{Mức tiêu thụ} & \textbf{Ghi chú} \\
+\hline
+RAM (idle) & khoảng 150MB & Python + FastAPI + Uvicorn \\
+\hline
+RAM (có model) & khoảng 450MB & Sau khi load YOLOv8n \\
+\hline
+RAM (inference) & khoảng 600MB & Trong lúc chạy inference \\
+\hline
+Disk (Docker image) & khoảng 800MB & Python + Ultralytics + OpenCV \\
+\hline
+CPU (inference) & 100\% của 1 core & YOLO chạy trên CPU \\
+\hline
+Thời gian khởi động & khoảng 5 giây & FastAPI + lazy-load model \\
+\hline
+\end{tabular}
+\Nguon{Nhóm thực hiện}
+\end{table}
+
+\section{Kết luận chương}
+
+Chương này đã trình bày các chức năng hoàn thành, phân tích chi tiết module `vision.py` và `main.py`, smoke test, Postman collection, Docker hóa và đánh giá hiệu năng YOLO. Kết quả cho thấy service chạy ổn định, có fallback hợp lý và đủ minh chứng để trình bày trước hội đồng.

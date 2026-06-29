@@ -1,0 +1,13 @@
+services:
+  ai-vision-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-vision-service
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+

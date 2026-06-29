@@ -1,0 +1,176 @@
+{
+  "info": {
+    "_postman_id": "d3f7b1d8-8c63-4e2c-a0c2-3f3f2d2d6a11",
+    "name": "AI Vision Service",
+    "description": "Integration test collection for AI Vision Service.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/health"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Health payload is ok', function () {",
+              "  const data = pm.response.json();",
+              "  pm.expect(data.status).to.eql('ok');",
+              "  pm.expect(data.service).to.eql('ai-vision-service');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Model Status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/model"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Model response has keys', function () {",
+              "  const data = pm.response.json();",
+              "  pm.expect(data).to.have.property('model_name');",
+              "  pm.expect(data).to.have.property('loaded');",
+              "  pm.expect(data).to.have.property('mode');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Detect Vision",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"camera_id\": \"{{cameraId}}\",\n  \"frame_url\": \"{{imageUrl}}\",\n  \"timestamp\": \"{{timestamp}}\"\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/vision/detect"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.environment.set('timestamp', new Date().toISOString());"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Detect payload has expected fields', function () {",
+              "  const data = pm.response.json();",
+              "  pm.expect(data).to.have.property('detection_id');",
+              "  pm.expect(data).to.have.property('anomaly_detected');",
+              "  pm.expect(data).to.have.property('confidence_score');",
+              "  pm.expect(data).to.have.property('model_mode');",
+              "  pm.environment.set('detectionId', data.detection_id);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Detection By ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/v1/vision/detections/{{detectionId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200 or 404', function () {",
+              "  pm.expect([200, 404]).to.include(pm.response.code);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analyze Mock",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"camera_id\": \"{{cameraId}}\",\n  \"image_url\": \"{{imageUrl}}\",\n  \"timestamp\": \"{{timestamp}}\"\n}"
+        },
+        "url": "{{baseUrl}}/analyze/mock"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.environment.set('timestamp', new Date().toISOString());"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Mock payload has expected fields', function () {",
+              "  const data = pm.response.json();",
+              "  pm.expect(data.model_mode).to.eql('mock-ai');",
+              "  pm.expect(data).to.have.property('detected');",
+              "  pm.expect(data).to.have.property('confidence');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    }
+  ]
+}
