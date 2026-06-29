@@ -54,7 +54,7 @@
     leftmargin=1.27cm,
     labelsep=0.5em
 }
-\usepackage{titlesec}
+\usepackage[indentafter]{titlesec}
 \usepackage{tocloft}
 \usepackage{hyperref}
 \usepackage{tikz}
@@ -257,10 +257,13 @@ Lê Quang Dũng -- 1771020177 -- 20/04/2005}
 
 \newcommand{\LogoTruong}{images/logo-dai-nam.png}
 
-\newcommand{\UnnumberedChapter}[1]{
-    \chapter*{#1}
-    \addcontentsline{toc}{chapter}{#1}
+\makeatletter
+\newcommand{\UnnumberedChapter}[1]{%
+    \chapter*{#1}%
+    \addcontentsline{toc}{chapter}{#1}%
+    \@afterindenttrue
 }
+\makeatother
 
 \newcommand{\Nguon}[1]{%
     \par\smallskip
